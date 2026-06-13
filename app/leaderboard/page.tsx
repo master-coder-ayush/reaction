@@ -1,0 +1,43 @@
+import { auth } from "@/auth";
+import { Nav } from "@/components/Nav";
+import { GuestBanner } from "@/components/GuestBanner";
+import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { loadLeaderboard } from "@/lib/leaderboard";
+import { loadLoggedInDashboard } from "@/lib/dashboard";
+
+// /leaderboard — visible to everyone (Sprint 4 §4.2). Defaults to the Weekly /
+// All view; the client table handles tab + filter switching and pins the
+// caller's own row. Guests see the full table but no personal rank.
+
+export default async function LeaderboardPage() {
+  const session = await auth();
+  const isGuest = !session?.user?.id;
+  const userId = isGuest ? null : Number(session!.user.id);
+
+  const { rows, me } = await loadLeaderboard("weekly", "all", userId, 50);
+  const xp = userId != null ? (await loadLoggedInDashboard(userId)).xp : 0;
+
+  return (
+    <>
+      {isGuest && <GuestBanner />}
+      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
+
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
+        <div className="mb-5">
+          <h1 className="text-2xl font-bold tracking-tight">🏆 Leaderboard</h1>
+          <p className="text-sm text-muted-foreground">
+            See how you stack up against other students.
+          </p>
+        </div>
+
+        <LeaderboardTable
+          initialPeriod="weekly"
+          initialClass="all"
+          initialRows={rows}
+          initialMe={me}
+          isGuest={isGuest}
+        />
+      </main>
+    </>
+  );
+}

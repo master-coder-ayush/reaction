@@ -5,6 +5,11 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { reactionCards, userProgress, userStats } from "@/db/schema";
 import { checkAndUpdateStreak, todayString } from "@/lib/streak";
+import {
+  checkAndAwardBadges,
+  streakMilestoneEvent,
+  type AwardedBadge,
+} from "@/lib/badges";
 
 // POST /api/progress — record a logged-in user's answer to one reaction.
 //
@@ -104,6 +109,7 @@ export async function POST(request: Request) {
 
   // A correct answer counts as activity for the day → advance the streak.
   let streak = null;
+  let awardedBadges: AwardedBadge[] = [];
   if (correct) {
     try {
       const outcome = await checkAndUpdateStreak(userId, todayString());
@@ -113,6 +119,12 @@ export async function POST(request: Request) {
         milestoneReached: outcome.milestoneReached,
         freezeAwarded: outcome.freezeAwarded,
       };
+
+      // 7 / 30 / 100-day streak milestones award their badge (Sprint 4 §4.4).
+      const milestoneEvent = streakMilestoneEvent(outcome.milestoneReached);
+      if (milestoneEvent) {
+        awardedBadges = await checkAndAwardBadges(userId, [milestoneEvent]);
+      }
     } catch {
       /* missing stats row — non-fatal for progress recording */
     }
@@ -124,5 +136,6 @@ export async function POST(request: Request) {
     mastered: (progress?.mastered ?? false) || newlyMastered,
     newlyMastered,
     streak,
+    awardedBadges,
   });
 }

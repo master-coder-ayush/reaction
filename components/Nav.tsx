@@ -28,6 +28,9 @@ export function Nav({
           <Link href="/leaderboard" className="hover:text-foreground">
             Leaderboard
           </Link>
+          <Link href="/badges" className="hover:text-foreground">
+            Badges
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">

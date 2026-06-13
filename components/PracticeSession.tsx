@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { QuestionCard, type AnsweredResult } from "@/components/QuestionCard";
 import {
   SessionSummary,
@@ -9,7 +9,8 @@ import {
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { awardGuestXp, recordGuestResult } from "@/lib/guest";
 import { pickSession, SESSION_SIZE } from "@/lib/session";
-import { xpForDifficulty } from "@/lib/xp";
+import { xpForDifficulty, XP_AWARDS } from "@/lib/xp";
+import { reportBadgeEvents, fireBadgeEarned } from "@/lib/badge-client";
 import type { ReactionDTO } from "@/app/api/reactions/route";
 
 type Props = {
@@ -21,6 +22,8 @@ type Props = {
   attemptsById: Record<number, number>;
   /** Reactions already mastered (≥3 correct) so we can flag fresh unlocks. */
   masteredIds: number[];
+  /** Which practice module this session is for. Defaults to Module 1. */
+  module?: 1 | 2;
 };
 
 type Phase = "playing" | "summary";
@@ -38,7 +41,9 @@ export function PracticeSession({
   isGuest,
   attemptsById,
   masteredIds,
+  module = 1,
 }: Props) {
+  const isNameModule = module === 2;
   // Re-pick trigger for "Try Again".
   const [sessionKey, setSessionKey] = useState(0);
 
@@ -60,6 +65,10 @@ export function PracticeSession({
 
   // Running correct counts (prior DB count for logged-in users + this session).
   const masteredSet = useMemo(() => new Set(masteredIds), [masteredIds]);
+
+  // Consecutive-correct counter within this session, for the "On a Roll" badge
+  // (3 in a row). A ref — it drives no rendering. Reset on Try Again.
+  const correctStreakRef = useRef(0);
 
   // Before the client-side selection runs, show a light placeholder. (The
   // server renders this branch too, so server/client markup matches.)
@@ -98,7 +107,11 @@ export function PracticeSession({
   // event handlers (closures) keep the non-null type.
   const activeSession = session;
   const reaction = activeSession[current];
-  const xp = xpForDifficulty(reaction.difficulty);
+  // Module 2 "Name the Reaction" awards a flat +20 XP (Sprint 4 §4.1); Module 1
+  // stays difficulty-scaled.
+  const xp = isNameModule
+    ? XP_AWARDS.CORRECT_MEDIUM
+    : xpForDifficulty(reaction.difficulty);
 
   async function handleAnswered(result: AnsweredResult) {
     const r = activeSession.find((x) => x.id === result.reactionId)!;
@@ -107,11 +120,16 @@ export function PracticeSession({
     // We only have a coarse signal for guests; for logged-in users the API
     // returns the authoritative newlyMastered flag, applied below.
     let unlockedCard = false;
+    const action = isNameModule ? "module_2_correct" : "module_1_correct";
+
+    // Track the in-session correct streak for the "On a Roll" badge (3 in a row).
+    correctStreakRef.current = result.correct ? correctStreakRef.current + 1 : 0;
+    const hitCorrectStreak3 = result.correct && correctStreakRef.current === 3;
 
     if (result.correct) {
       setXpEarned((x) => x + result.xp);
       if (isGuest) {
-        const award = awardGuestXp(result.xp, "module_1_correct");
+        const award = awardGuestXp(result.xp, action);
         if (award.leveledUp) fireLevelUp(award.newLevelTitle);
       } else {
         // Award XP, then record progress (mastery / card unlock authoritative).
@@ -119,7 +137,7 @@ export function PracticeSession({
           const res = await fetch("/api/xp/award", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: result.xp, action: "module_1_correct" }),
+            body: JSON.stringify({ amount: result.xp, action }),
           });
           const data = await res.json();
           if (res.ok && data.leveledUp) fireLevelUp(data.newLevelTitle);
@@ -143,8 +161,21 @@ export function PracticeSession({
         });
         const data = await res.json();
         if (res.ok && data.newlyMastered) unlockedCard = true;
+        // Streak-milestone badges are awarded server-side; reveal them here.
+        if (res.ok && Array.isArray(data.awardedBadges)) {
+          for (const badge of data.awardedBadges) fireBadgeEarned(badge);
+        }
       } catch {
         /* non-fatal */
+      }
+
+      // Badge events (logged-in only). The server checks each and awards any
+      // newly-earned badge, firing the reveal toast. FIRST_REACTION is checked on
+      // every correct answer (server dedups); CORRECT_STREAK_3 only when hit.
+      if (result.correct) {
+        const events = ["FIRST_REACTION"];
+        if (hitCorrectStreak3) events.push("CORRECT_STREAK_3");
+        void reportBadgeEvents(events);
       }
     }
 
@@ -171,6 +202,7 @@ export function PracticeSession({
     setCurrent(0);
     setResults([]);
     setXpEarned(0);
+    correctStreakRef.current = 0;
     setPhase("playing");
     setSessionKey((k) => k + 1);
   }
@@ -196,6 +228,7 @@ export function PracticeSession({
       xp={xp}
       onAnswered={handleAnswered}
       onNext={handleNext}
+      forceType={isNameModule ? "name" : undefined}
     />
   );
 }

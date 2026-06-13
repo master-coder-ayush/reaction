@@ -43,6 +43,12 @@ type Props = {
   xp: number;
   onAnswered: (result: AnsweredResult) => void;
   onNext: () => void;
+  /**
+   * Force a specific question type instead of the Module 1 priority. Module 2
+   * ("Name the Reaction") passes "name" so the card always asks for the name and
+   * shows the full equation prominently.
+   */
+  forceType?: string;
 };
 
 /**
@@ -57,11 +63,17 @@ export function QuestionCard({
   xp,
   onAnswered,
   onNext,
+  forceType,
 }: Props) {
   const questionType = useMemo(
-    () => pickQuestionType(reaction.options),
-    [reaction.options]
+    () =>
+      forceType && reaction.options.some((o) => o.optionType === forceType)
+        ? forceType
+        : pickQuestionType(reaction.options),
+    [reaction.options, forceType]
   );
+
+  const isNameMode = questionType === "name";
 
   // Only the options for the chosen question type, in display order.
   const options = useMemo(
@@ -127,13 +139,28 @@ export function QuestionCard({
         </span>
       </div>
 
-      <h2 className="mt-3 text-lg font-semibold">{reaction.name}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        {reaction.questionText}
-      </p>
+      {/* In name mode the reaction name *is* the answer, so we hide it and lead
+          with the equation. Module 1 shows the conversion goal as the heading. */}
+      {isNameMode ? (
+        <p className="mt-3 text-sm text-muted-foreground">
+          {reaction.questionText}
+        </p>
+      ) : (
+        <>
+          <h2 className="mt-3 text-lg font-semibold">{reaction.name}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {reaction.questionText}
+          </p>
+        </>
+      )}
 
       {reaction.equationText && (
-        <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-center font-mono text-base">
+        <p
+          className={
+            "mt-3 rounded-lg bg-muted px-3 py-2 text-center font-mono " +
+            (isNameMode ? "text-lg font-semibold" : "text-base")
+          }
+        >
           {reaction.equationText}
         </p>
       )}

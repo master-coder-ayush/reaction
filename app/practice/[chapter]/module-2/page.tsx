@@ -6,15 +6,17 @@ import { userProgress } from "@/db/schema";
 import { Nav } from "@/components/Nav";
 import { GuestBanner } from "@/components/GuestBanner";
 import { PracticeSession } from "@/components/PracticeSession";
-import { loadChapterReactions } from "@/lib/practice";
+import { loadNamedReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
 
-// Module 1 — Build the Reaction (MCQ). Route: /practice/[chapter]/module-1
-// where [chapter] is the category order_index (the chapter id used in the map).
-// Public: guests practise with no auth redirect (Sprint 3 §3.5).
+// Module 2 — Name the Reaction (Sprint 4 §4.1). Route: /practice/[chapter]/module-2
+// Shows only reactions flagged is_name_reaction; the card asks for the reaction
+// name (4 options) and reveals story_text/why_text after the answer. Reuses the
+// Sprint 3 QuestionCard / PracticeSession / SessionSummary via `module={2}`.
+// Public: guests practise with no auth redirect.
 
-export default async function Module1Page({
+export default async function Module2Page({
   params,
 }: {
   params: Promise<{ chapter: string }>;
@@ -28,11 +30,9 @@ export default async function Module1Page({
   const userId = isGuest ? null : Number(session!.user.id);
 
   const { categoryName, reactions } = validChapter
-    ? await loadChapterReactions(chapterId)
+    ? await loadNamedReactions(chapterId)
     : { categoryName: null, reactions: [] };
 
-  // Logged-in: load prior attempt counts (for weighted selection) and mastered
-  // reactions (so we only flag *fresh* card unlocks in the summary).
   let attemptsById: Record<number, number> = {};
   let masteredIds: number[] = [];
   let xp = 0;
@@ -79,17 +79,16 @@ export default async function Module1Page({
               ← Chapter Map
             </Link>
             <h1 className="mt-1 text-xl font-bold tracking-tight">
-              {chapterMeta?.name ?? categoryName ?? "Practice"} · Module 1
+              {chapterMeta?.name ?? categoryName ?? "Practice"} · Module 2
             </h1>
-            <p className="text-sm text-muted-foreground">Build the Reaction</p>
+            <p className="text-sm text-muted-foreground">Name the Reaction</p>
             <Link
-              href={`/practice/${chapterId}/module-2`}
+              href={`/practice/${chapterId}/module-1`}
               className="mt-1 inline-block text-xs font-medium text-primary hover:underline"
             >
-              Switch to Module 2: Name the Reaction →
+              ← Back to Module 1: Build the Reaction
             </Link>
           </div>
-          {/* Reference drawer trigger — content lands in Sprint 8. */}
           <button
             type="button"
             aria-label="Reference charts (coming soon)"
@@ -117,6 +116,7 @@ export default async function Module1Page({
             isGuest={isGuest}
             attemptsById={attemptsById}
             masteredIds={masteredIds}
+            module={2}
           />
         )}
       </main>

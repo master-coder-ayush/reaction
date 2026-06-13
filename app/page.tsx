@@ -9,7 +9,9 @@ import { ReactionOfTheDay } from "@/components/ReactionOfTheDay";
 import { LeaderboardRankChip } from "@/components/LeaderboardRankChip";
 import { ContinueCard } from "@/components/ContinueCard";
 import { ChapterMap } from "@/components/ChapterMap";
+import { DashboardLeaderboard } from "@/components/DashboardLeaderboard";
 import { loadDailyChallenge, loadLoggedInDashboard } from "@/lib/dashboard";
+import { loadLeaderboard } from "@/lib/leaderboard";
 
 export default async function Home({
   searchParams,
@@ -24,6 +26,9 @@ export default async function Home({
   // Same layout, two data shapes (Sprint 2 §2.1).
   const daily = await loadDailyChallenge(userId);
   const data = userId != null ? await loadLoggedInDashboard(userId) : null;
+
+  // Dashboard leaderboard widget (Sprint 4 §4.5): top 3 weekly + own row.
+  const weekly = await loadLeaderboard("weekly", "all", userId, 3);
 
   return (
     <>
@@ -79,12 +84,20 @@ export default async function Home({
                 <div>
                   <LeaderboardRankChip rank={data.weeklyRank} isGuest={false} />
                 </div>
+                <DashboardLeaderboard
+                  top={weekly.rows}
+                  me={weekly.me}
+                  isGuest={false}
+                />
               </>
             ) : (
-              <div>
+              <>
                 {/* Guest: streak hidden; leaderboard replaced with sign-up prompt. */}
-                <LeaderboardRankChip isGuest />
-              </div>
+                <div>
+                  <LeaderboardRankChip isGuest />
+                </div>
+                <DashboardLeaderboard top={weekly.rows} me={null} isGuest />
+              </>
             )}
           </div>
         </div>

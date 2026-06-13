@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QuestionCard, type AnsweredResult } from "@/components/QuestionCard";
 import {
   SessionSummary,
@@ -39,16 +39,19 @@ export function PracticeSession({
   attemptsById,
   masteredIds,
 }: Props) {
-  // Track local correct-count per reaction across this session so we can detect
-  // the 3rd correct → "card unlocked" for guests (and as a UI hint for users).
+  // Re-pick trigger for "Try Again".
   const [sessionKey, setSessionKey] = useState(0);
 
-  const session = useMemo(
-    () => pickSession(reactions, attemptsById, SESSION_SIZE),
-    // Re-pick when the user hits "Try Again".
+  // Session selection uses Math.random, so it must run only on the client —
+  // doing it during render would mismatch the server's choice and break
+  // hydration. Pick after mount (and on each Try Again) into state.
+  const [session, setSession] = useState<ReactionDTO[] | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSession(pickSession(reactions, attemptsById, SESSION_SIZE));
+    // attemptsById is stable per page load; re-pick only on Try Again / data change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reactions, sessionKey]
-  );
+  }, [reactions, sessionKey]);
 
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState<Phase>("playing");
@@ -57,6 +60,21 @@ export function PracticeSession({
 
   // Running correct counts (prior DB count for logged-in users + this session).
   const masteredSet = useMemo(() => new Set(masteredIds), [masteredIds]);
+
+  // Before the client-side selection runs, show a light placeholder. (The
+  // server renders this branch too, so server/client markup matches.)
+  if (session === null) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-4 space-y-2.5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-12 animate-pulse rounded-xl bg-muted" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   // Empty chapter / no reactions edge case (Sprint 3 journey edge case).
   if (session.length === 0) {
@@ -76,11 +94,14 @@ export function PracticeSession({
     );
   }
 
-  const reaction = session[current];
+  // `session` is non-null past the guard above; bind a narrowed local so the
+  // event handlers (closures) keep the non-null type.
+  const activeSession = session;
+  const reaction = activeSession[current];
   const xp = xpForDifficulty(reaction.difficulty);
 
   async function handleAnswered(result: AnsweredResult) {
-    const r = session.find((x) => x.id === result.reactionId)!;
+    const r = activeSession.find((x) => x.id === result.reactionId)!;
 
     // Detect mastery for this session: was already at 2 correct in DB, now +1?
     // We only have a coarse signal for guests; for logged-in users the API
@@ -139,7 +160,7 @@ export function PracticeSession({
   }
 
   function handleNext() {
-    if (current + 1 >= session.length) {
+    if (current + 1 >= activeSession.length) {
       setPhase("summary");
     } else {
       setCurrent((c) => c + 1);
@@ -171,7 +192,7 @@ export function PracticeSession({
       key={`${sessionKey}-${reaction.id}-${current}`}
       reaction={reaction}
       index={current + 1}
-      total={session.length}
+      total={activeSession.length}
       xp={xp}
       onAnswered={handleAnswered}
       onNext={handleNext}

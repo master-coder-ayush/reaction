@@ -80,6 +80,11 @@ export default async function Home({
                   doneToday={data.doneToday}
                   broken={data.broken}
                   canFreeze={data.canFreeze}
+                  atRisk={
+                    !data.doneToday &&
+                    data.streakCurrent > 0 &&
+                    new Date().getHours() >= 18
+                  }
                 />
                 <div>
                   <LeaderboardRankChip rank={data.weeklyRank} isGuest={false} />

@@ -34,6 +34,9 @@ export function Nav({
           <Link href="/cards" className="hover:text-foreground">
             Cards
           </Link>
+          <Link href="/reference" className="hover:text-foreground">
+            Reference
+          </Link>
           <Link href="/leaderboard" className="hover:text-foreground">
             Leaderboard
           </Link>

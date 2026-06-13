@@ -5,6 +5,7 @@ import { AnswerOption, type AnswerState } from "@/components/AnswerOption";
 import { HintPanel } from "@/components/HintPanel";
 import { Confetti } from "@/components/Confetti";
 import { XPAnimation } from "@/components/XPAnimation";
+import { ReferenceDrawer } from "@/components/ReferenceDrawer";
 import { reactionColorVar } from "@/lib/constants";
 import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 
@@ -49,6 +50,8 @@ type Props = {
    * shows the full equation prominently.
    */
   forceType?: string;
+  /** Chapter id for the in-question reagent reference drawer (Sprint 8 §8.4). */
+  chapterId?: number;
 };
 
 /**
@@ -64,6 +67,7 @@ export function QuestionCard({
   onAnswered,
   onNext,
   forceType,
+  chapterId,
 }: Props) {
   const questionType = useMemo(
     () =>
@@ -131,12 +135,15 @@ export function QuestionCard({
         <span className="tabular-nums">
           Question {index} of {total}
         </span>
-        <span
-          className="rounded-full px-2 py-0.5 font-medium text-white"
-          style={{ backgroundColor: accent }}
-        >
-          {reaction.reactionTypeName}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className="rounded-full px-2 py-0.5 font-medium text-white"
+            style={{ backgroundColor: accent }}
+          >
+            {reaction.reactionTypeName}
+          </span>
+          {chapterId != null && <ReferenceDrawer chapterId={chapterId} />}
+        </div>
       </div>
 
       {/* In name mode the reaction name *is* the answer, so we hide it and lead

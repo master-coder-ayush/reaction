@@ -234,6 +234,7 @@ export function PracticeSession({
       onAnswered={handleAnswered}
       onNext={handleNext}
       forceType={isNameModule ? "name" : undefined}
+      chapterId={chapterId}
     />
   );
 }

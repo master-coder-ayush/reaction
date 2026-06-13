@@ -132,6 +132,16 @@ export default async function ChapterOverviewPage({
           </div>
         )}
 
+        {/* Study aids. */}
+        <div className="mt-4">
+          <Link
+            href={`/learn/${chapterId}/chart`}
+            className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-sm font-medium hover:bg-muted"
+          >
+            📋 Conversion Chart (Study Aid)
+          </Link>
+        </div>
+
         {/* Reaction tree. */}
         <section className="mt-6">
           <h2 className="mb-2 text-lg font-bold tracking-tight">

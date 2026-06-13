@@ -4,6 +4,8 @@ import { GuestBanner } from "@/components/GuestBanner";
 import { ChapterMap } from "@/components/ChapterMap";
 import { loadChapterProgress, loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const metadata = { title: "Chapter Map" };
+
 export default async function LearnPage() {
   const session = await auth();
   const isGuest = !session?.user?.id;

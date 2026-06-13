@@ -8,6 +8,8 @@ import { TimedSession } from "@/components/TimedSession";
 import { loadAllReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const metadata = { title: "Timed Challenge" };
+
 // /timed — Module 5 Timed Challenge (Sprint 7 §7.2). 60-second burst mode over
 // the full reaction pool. Logged-in users post their score to the Speed
 // leaderboard and can earn Speed Demon; guests play with localStorage XP only.

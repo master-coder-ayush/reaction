@@ -15,8 +15,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Level Up Chemistry",
-  description: "Turn organic reactions into a game.",
+  metadataBase: new URL("https://levelupchemistry.in"),
+  title: {
+    default: "Level Up Chemistry",
+    template: "%s · Level Up Chemistry",
+  },
+  description:
+    "A Duolingo-style organic chemistry app — practise reactions, earn XP, collect cards, and climb the leaderboard.",
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    siteName: "Level Up Chemistry",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

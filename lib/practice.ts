@@ -117,6 +117,85 @@ export async function loadAllReactions(): Promise<ReactionDTO[]> {
 }
 
 // ---------------------------------------------------------------------------
+// Functional-group conversion chart (Sprint 8 §8.5). For a chapter, the
+// From → Reagent → To table built from each reaction's correct reactant /
+// reagent / product, colour-coded by reaction type. A study aid, no auth.
+// ---------------------------------------------------------------------------
+
+export type ConversionRow = {
+  reactionId: number;
+  name: string;
+  from: string | null;
+  reagent: string | null;
+  to: string | null;
+  typeName: string;
+  typeColor: string | null;
+};
+
+export async function loadConversionChart(
+  chapter: number
+): Promise<{ categoryName: string | null; rows: ConversionRow[] }> {
+  const [category] = await db
+    .select({ id: categories.id, name: categories.name })
+    .from(categories)
+    .where(eq(categories.orderIndex, chapter))
+    .limit(1);
+  if (!category) return { categoryName: null, rows: [] };
+
+  const reactionRows = await db
+    .select({
+      id: reactions.id,
+      name: reactions.name,
+      typeName: reactionTypes.name,
+      typeColor: reactionTypes.color,
+    })
+    .from(reactions)
+    .innerJoin(reactionTypes, eq(reactions.reactionTypeId, reactionTypes.id))
+    .where(eq(reactions.categoryId, category.id));
+
+  if (reactionRows.length === 0) {
+    return { categoryName: category.name, rows: [] };
+  }
+
+  const optRows = await db
+    .select({
+      reactionId: reactionOptions.reactionId,
+      optionType: reactionOptions.optionType,
+      text: reactionOptions.text,
+      isCorrect: reactionOptions.isCorrect,
+    })
+    .from(reactionOptions);
+
+  const faces = new Map<
+    number,
+    { reactant?: string; reagent?: string; product?: string }
+  >();
+  for (const o of optRows) {
+    if (!o.isCorrect) continue;
+    const f = faces.get(o.reactionId) ?? {};
+    if (o.optionType === "reactant") f.reactant = o.text;
+    else if (o.optionType === "reagent") f.reagent = o.text;
+    else if (o.optionType === "product") f.product = o.text;
+    faces.set(o.reactionId, f);
+  }
+
+  const rows: ConversionRow[] = reactionRows.map((r) => {
+    const f = faces.get(r.id) ?? {};
+    return {
+      reactionId: r.id,
+      name: r.name,
+      from: f.reactant ?? null,
+      reagent: f.reagent ?? null,
+      to: f.product ?? null,
+      typeName: r.typeName,
+      typeColor: r.typeColor,
+    };
+  });
+
+  return { categoryName: category.name, rows };
+}
+
+// ---------------------------------------------------------------------------
 // Module 2 — Name the Reaction (Sprint 4 §4.1). Same shape as Module 1, but only
 // reactions flagged `is_name_reaction` and only their `name`-type options.
 // ---------------------------------------------------------------------------

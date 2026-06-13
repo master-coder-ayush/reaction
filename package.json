@@ -17,7 +17,9 @@
     "db:seed:sprint5": "tsx scripts/seed-sprint5.ts",
     "db:seed:pathways": "tsx scripts/seed-pathways.ts",
     "db:seed:trees": "tsx scripts/seed-trees.ts",
-    "db:seed:mechanisms": "tsx scripts/seed-mechanisms.ts"
+    "db:seed:mechanisms": "tsx scripts/seed-mechanisms.ts",
+    "db:seed:all-reactions": "tsx scripts/seed-all-reactions.ts",
+    "db:seed:daily": "tsx scripts/seed-daily-challenges.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

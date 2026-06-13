@@ -125,6 +125,55 @@ const PATHWAYS: PathwaySpec[] = [
       { compound: "Chloroethane", reagent: "SOCl₂", type: "Substitution" },
     ],
   },
+
+  // ---- Third pathway per chapter (Sprint 8 §8.6: ≥3 pathways/chapter) -----
+  {
+    chapter: 1,
+    name: "Ethyne to Ethanal",
+    description: "Hydration of an alkyne gives the aldehyde.",
+    steps: [
+      { compound: "Ethyne" },
+      { compound: "Ethanal", reagent: "H₂O / HgSO₄, H₂SO₄", type: "Addition" },
+    ],
+  },
+  {
+    chapter: 2,
+    name: "Bromoethane to Butane",
+    description: "Wurtz coupling joins two ethyl units.",
+    steps: [
+      { compound: "Bromoethane" },
+      { compound: "Butane", reagent: "Na, dry ether (Wurtz)", type: "Substitution" },
+    ],
+  },
+  {
+    chapter: 3,
+    name: "Ethanol to Ethyl ethanoate",
+    description: "Oxidise to the acid, then esterify back with ethanol.",
+    steps: [
+      { compound: "Ethanol" },
+      { compound: "Ethanoic Acid", reagent: "KMnO₄ / H⁺", type: "Oxidation" },
+      { compound: "Ethyl ethanoate", reagent: "C₂H₅OH / H₂SO₄", type: "Substitution" },
+    ],
+  },
+  {
+    chapter: 4,
+    name: "Propanone to Propan-2-ol",
+    description: "Reduce the ketone to a secondary alcohol.",
+    steps: [
+      { compound: "Propanone" },
+      { compound: "Propan-2-ol", reagent: "NaBH₄", type: "Reduction" },
+    ],
+  },
+  {
+    chapter: 5,
+    name: "Ethanoic Acid to Ethanamide",
+    description: "Via the ammonium salt, then dehydration.",
+    steps: [
+      { compound: "Ethanoic Acid" },
+      { compound: "Ammonium ethanoate", reagent: "NH₃", type: "Substitution" },
+      { compound: "Ethanamide", reagent: "heat (−H₂O)", type: "Elimination" },
+    ],
+  },
 ];
 
 async function main() {

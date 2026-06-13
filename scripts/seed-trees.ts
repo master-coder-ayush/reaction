@@ -67,6 +67,56 @@ const TREES: TreeSpec[] = [
       { from: "haloalkane", to: "alkene", reagent: "KOH (alc)", color: "orange" },
     ],
   },
+  // ---- Chapter 3: Alcohols, Phenols & Ethers -----------------------------
+  {
+    chapter: 3,
+    nodes: [
+      { key: "alcohol", name: "Alcohol", color: "teal", col: 0, row: 2 },
+      { key: "aldehyde", name: "Aldehyde", color: "red", col: 1, row: 0 },
+      { key: "acid", name: "Carboxylic Acid", color: "red", col: 2, row: 0 },
+      { key: "alkene", name: "Alkene", color: "orange", col: 1, row: 2 },
+      { key: "haloalkane", name: "Haloalkane", color: "purple", col: 1, row: 4 },
+    ],
+    edges: [
+      { from: "alcohol", to: "aldehyde", reagent: "PCC", color: "red" },
+      { from: "aldehyde", to: "acid", reagent: "KMnO₄", color: "red" },
+      { from: "alcohol", to: "alkene", reagent: "H₂SO₄, 443 K", color: "orange" },
+      { from: "alcohol", to: "haloalkane", reagent: "SOCl₂", color: "purple" },
+    ],
+  },
+  // ---- Chapter 4: Aldehydes & Ketones ------------------------------------
+  {
+    chapter: 4,
+    nodes: [
+      { key: "aldehyde", name: "Aldehyde", color: "red", col: 0, row: 1 },
+      { key: "acid", name: "Carboxylic Acid", color: "red", col: 1, row: 0 },
+      { key: "alcohol1", name: "1° Alcohol", color: "teal", col: 1, row: 2 },
+      { key: "ketone", name: "Ketone", color: "blue", col: 0, row: 3 },
+      { key: "alcohol2", name: "2° Alcohol", color: "teal", col: 1, row: 3 },
+    ],
+    edges: [
+      { from: "aldehyde", to: "acid", reagent: "KMnO₄", color: "red" },
+      { from: "aldehyde", to: "alcohol1", reagent: "NaBH₄", color: "green" },
+      { from: "ketone", to: "alcohol2", reagent: "NaBH₄", color: "green" },
+    ],
+  },
+  // ---- Chapter 5: Carboxylic Acids ---------------------------------------
+  {
+    chapter: 5,
+    nodes: [
+      { key: "acid", name: "Carboxylic Acid", color: "red", col: 0, row: 2 },
+      { key: "acylchloride", name: "Acyl Chloride", color: "purple", col: 1, row: 0 },
+      { key: "ester", name: "Ester", color: "purple", col: 1, row: 2 },
+      { key: "amide", name: "Amide", color: "purple", col: 1, row: 4 },
+      { key: "alcohol", name: "1° Alcohol", color: "teal", col: 2, row: 2 },
+    ],
+    edges: [
+      { from: "acid", to: "acylchloride", reagent: "SOCl₂", color: "purple" },
+      { from: "acid", to: "ester", reagent: "R-OH / H₂SO₄", color: "purple" },
+      { from: "acid", to: "amide", reagent: "NH₃, heat", color: "purple" },
+      { from: "acid", to: "alcohol", reagent: "LiAlH₄", color: "green" },
+    ],
+  },
 ];
 
 async function main() {

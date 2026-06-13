@@ -4,6 +4,7 @@ import { eq, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { rateLimit } from "@/lib/rate-limit";
 
 declare module "next-auth" {
   interface Session {
@@ -48,6 +49,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!identifier || !password) return null;
 
         const lookup = identifier.toLowerCase();
+
+        // Rate limit: 10 login attempts per identifier per 10 minutes
+        // (Sprint 8 §8.10). Throttles credential-stuffing without a store.
+        if (!rateLimit(`login:${lookup}`, 10, 10 * 60 * 1000)) {
+          return null;
+        }
         const [user] = await db
           .select()
           .from(users)

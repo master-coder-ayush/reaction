@@ -8,6 +8,8 @@ import { loadReactionCards } from "@/lib/cards";
 import { loadPathwayCards } from "@/lib/pathway";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const metadata = { title: "Reaction Cards" };
+
 // /cards — Reaction card collection (PLAN.md §9, Sprint 7 §7.4) + the Pathway
 // Cards section (Sprint 6 §6.1). The grid is open to everyone: logged-in users
 // see unlocked cards in color and the rest as silhouettes (collection progress,

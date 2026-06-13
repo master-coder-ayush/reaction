@@ -5,8 +5,17 @@ import { db } from "@/db";
 import { users, userStats, userProgress, reactions } from "@/db/schema";
 import { signupSchema } from "@/lib/validation";
 import { levelForXp } from "@/lib/constants";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 sign-ups per IP per 10 minutes (Sprint 8 §8.10).
+  if (!rateLimit(`signup:${clientIp(request)}`, 5, 10 * 60 * 1000)) {
+    return NextResponse.json(
+      { error: "Too many sign-up attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

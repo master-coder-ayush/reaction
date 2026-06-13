@@ -9,6 +9,8 @@ import {
 } from "@/lib/leaderboard";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const metadata = { title: "Leaderboard" };
+
 // /leaderboard — visible to everyone (Sprint 4 §4.2). Defaults to the Weekly /
 // All view; the client table handles tab + filter switching and pins the
 // caller's own row. Guests see the full table but no personal rank.

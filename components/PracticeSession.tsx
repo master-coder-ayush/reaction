@@ -160,7 +160,12 @@ export function PracticeSession({
           }),
         });
         const data = await res.json();
-        if (res.ok && data.newlyMastered) unlockedCard = true;
+        if (res.ok && data.newlyMastered) {
+          unlockedCard = true;
+          // A fresh card unlock can cross the Card Collector (25) / Reaction
+          // Ninja (all) thresholds — check both (Sprint 7 §7.5).
+          void reportBadgeEvents(["CARDS_25", "CARDS_ALL"]);
+        }
         // Streak-milestone badges are awarded server-side; reveal them here.
         if (res.ok && Array.isArray(data.awardedBadges)) {
           for (const badge of data.awardedBadges) fireBadgeEarned(badge);

@@ -55,6 +55,9 @@ export const userStats = pgTable("user_stats", {
   totalAttempts: integer("total_attempts").notNull().default(0),
   // Best Escape Room time in seconds (Sprint 5 §5.4). Null until first escape.
   escapeBestSeconds: integer("escape_best_seconds"),
+  // Best Timed Challenge score (correct answers in 60s — Sprint 7 §7.2). Used
+  // for the Speed leaderboard and the Speed Demon badge. Null until first run.
+  bestTimedScore: integer("best_timed_score"),
 });
 
 // ---------------------------------------------------------------------------
@@ -155,6 +158,63 @@ export const pathwaySteps = pgTable(
     ),
   },
   (t) => [index("pathway_steps_pathway_idx").on(t.pathwayId)]
+);
+
+// ---------------------------------------------------------------------------
+// Mechanisms — Module 3 Drag & Drop (Sprint 7 §7.1). Each mechanism is one
+// reaction diagram (SN1/SN2/E2/Electrophilic Addition) with labelled slots the
+// student fills by dragging label chips. Evaluation is client-side, so the
+// correct answer (each slot's expected label) ships to the client; pass/fail is
+// posted to /api/progress against the linked reaction. Seeded data only.
+// ---------------------------------------------------------------------------
+
+export const mechanisms = pgTable("mechanisms", {
+  id: serial("id").primaryKey(),
+  categoryId: integer("category_id")
+    .notNull()
+    .references(() => categories.id, { onDelete: "cascade" }),
+  // Optional link to a reaction so pass/fail records against user_progress.
+  reactionId: integer("reaction_id").references(() => reactions.id, {
+    onDelete: "set null",
+  }),
+  name: text("name").notNull(),
+  // SN1 / SN2 / E2 / Electrophilic Addition
+  mechanismType: varchar("mechanism_type", { length: 32 }).notNull(),
+  difficulty: integer("difficulty").notNull().default(2),
+  // The reaction structure to render (simple expression, e.g. the substrate).
+  diagramText: text("diagram_text").notNull(),
+  storyText: text("story_text"),
+});
+
+// A drop target on the diagram. `correctLabel` is the label text that belongs
+// here; `posX`/`posY` are 0-100 percentages for absolute placement on the SVG.
+export const mechanismSlots = pgTable(
+  "mechanism_slots",
+  {
+    id: serial("id").primaryKey(),
+    mechanismId: integer("mechanism_id")
+      .notNull()
+      .references(() => mechanisms.id, { onDelete: "cascade" }),
+    slotKey: varchar("slot_key", { length: 32 }).notNull(),
+    correctLabel: text("correct_label").notNull(),
+    posX: integer("pos_x").notNull().default(50),
+    posY: integer("pos_y").notNull().default(50),
+  },
+  (t) => [index("mechanism_slots_mechanism_idx").on(t.mechanismId)]
+);
+
+// The tray chips for a mechanism. Includes every correct label plus optional
+// distractors (correct labels are matched to slots by text on the client).
+export const mechanismLabels = pgTable(
+  "mechanism_labels",
+  {
+    id: serial("id").primaryKey(),
+    mechanismId: integer("mechanism_id")
+      .notNull()
+      .references(() => mechanisms.id, { onDelete: "cascade" }),
+    text: text("text").notNull(),
+  },
+  (t) => [index("mechanism_labels_mechanism_idx").on(t.mechanismId)]
 );
 
 // Reaction trees (Sprint 6 §6.3). A tree is the set of nodes + edges for one

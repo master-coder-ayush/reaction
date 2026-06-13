@@ -210,6 +210,52 @@ function rankAndSlice(
 }
 
 // ---------------------------------------------------------------------------
+// Speed leaderboard (Sprint 7 §7.2). Ranks users by their best Timed Challenge
+// score (most correct-in-60s first) off userStats.bestTimedScore.
+// ---------------------------------------------------------------------------
+
+export type SpeedLeaderboardRow = {
+  userId: number;
+  rank: number;
+  username: string;
+  score: number;
+};
+
+export type SpeedLeaderboardResult = {
+  rows: SpeedLeaderboardRow[];
+  me: SpeedLeaderboardRow | null;
+};
+
+export async function loadSpeedLeaderboard(
+  callerId: number | null,
+  limit = 20
+): Promise<SpeedLeaderboardResult> {
+  const all = await db
+    .select({
+      userId: users.id,
+      username: users.username,
+      score: userStats.bestTimedScore,
+    })
+    .from(userStats)
+    .innerJoin(users, eq(userStats.userId, users.id))
+    .where(isNotNull(userStats.bestTimedScore))
+    .orderBy(desc(userStats.bestTimedScore));
+
+  const ranked: SpeedLeaderboardRow[] = all.map((r, i) => ({
+    userId: r.userId,
+    username: r.username,
+    score: r.score ?? 0,
+    rank: i + 1,
+  }));
+
+  const rows = ranked.slice(0, limit);
+  const me =
+    callerId != null ? ranked.find((r) => r.userId === callerId) ?? null : null;
+
+  return { rows, me };
+}
+
+// ---------------------------------------------------------------------------
 // Escape Room leaderboard (Sprint 5 §5.5). Ranks users by their best escape time
 // (fastest first) — this reads userStats.escapeBestSeconds, which the escape
 // completion route keeps as the user's personal best.

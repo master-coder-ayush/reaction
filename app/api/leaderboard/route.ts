@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import {
   loadEscapeLeaderboard,
   loadLeaderboard,
+  loadSpeedLeaderboard,
   type ClassFilter,
   type Period,
 } from "@/lib/leaderboard";
@@ -26,6 +27,12 @@ export async function GET(request: Request) {
   if (searchParams.get("period") === "escape") {
     const { rows, me } = await loadEscapeLeaderboard(callerId, 20);
     return NextResponse.json({ period: "escape", rows, me });
+  }
+
+  // Speed tab (Sprint 7 §7.2): ranked best Timed Challenge scores, highest first.
+  if (searchParams.get("period") === "speed") {
+    const { rows, me } = await loadSpeedLeaderboard(callerId, 20);
+    return NextResponse.json({ period: "speed", rows, me });
   }
 
   const periodRaw = (searchParams.get("period") ?? "weekly") as Period;

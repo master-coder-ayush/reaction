@@ -116,6 +116,15 @@ async function meetsRequirement(
         .where(eq(reactionCards.userId, userId));
       return total > 0 && owned >= total;
     }
+    case "timed_score": {
+      // Speed Demon (Sprint 7 §7.3): held once best_timed_score ≥ requirement.
+      const [stats] = await db
+        .select({ best: userStats.bestTimedScore })
+        .from(userStats)
+        .where(eq(userStats.userId, userId))
+        .limit(1);
+      return (stats?.best ?? 0) >= requirementValue;
+    }
     case "pathway_completed": {
       // Pathway Pioneer (Sprint 6 §6.2): held once the user owns ≥1 pathway card.
       const [{ n }] = await db

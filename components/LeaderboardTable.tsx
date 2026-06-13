@@ -6,6 +6,7 @@ import type {
   EscapeLeaderboardRow,
   LeaderboardRow,
   Period,
+  SpeedLeaderboardRow,
 } from "@/lib/leaderboard";
 import { formatTime } from "@/lib/escape";
 
@@ -39,10 +40,12 @@ type Props = {
   initialMe: LeaderboardRow | null;
   initialEscapeRows: EscapeLeaderboardRow[];
   initialEscapeMe: EscapeLeaderboardRow | null;
+  initialSpeedRows: SpeedLeaderboardRow[];
+  initialSpeedMe: SpeedLeaderboardRow | null;
   isGuest: boolean;
 };
 
-type Mode = "xp" | "escape";
+type Mode = "xp" | "speed" | "escape";
 
 export function LeaderboardTable({
   initialPeriod,
@@ -51,11 +54,15 @@ export function LeaderboardTable({
   initialMe,
   initialEscapeRows,
   initialEscapeMe,
+  initialSpeedRows,
+  initialSpeedMe,
   isGuest,
 }: Props) {
   const [mode, setMode] = useState<Mode>("xp");
   const [escapeRows] = useState<EscapeLeaderboardRow[]>(initialEscapeRows);
   const [escapeMe] = useState<EscapeLeaderboardRow | null>(initialEscapeMe);
+  const [speedRows] = useState<SpeedLeaderboardRow[]>(initialSpeedRows);
+  const [speedMe] = useState<SpeedLeaderboardRow | null>(initialSpeedMe);
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [classFilter, setClassFilter] = useState<ClassFilter>(initialClass);
   const [rows, setRows] = useState<LeaderboardRow[]>(initialRows);
@@ -101,8 +108,9 @@ export function LeaderboardTable({
       {/* Mode switch: XP leaderboard vs Escape Room (Sprint 5 §5.5). */}
       <div className="mb-3 flex gap-2">
         {([
-          { key: "xp", label: "🏆 XP Leaderboard" },
-          { key: "escape", label: "🗝️ Escape Room" },
+          { key: "xp", label: "🏆 XP" },
+          { key: "speed", label: "⚡ Speed" },
+          { key: "escape", label: "🗝️ Escape" },
         ] as const).map((m) => (
           <button
             key={m.key}
@@ -122,6 +130,8 @@ export function LeaderboardTable({
 
       {mode === "escape" ? (
         <EscapeView rows={escapeRows} me={escapeMe} isGuest={isGuest} />
+      ) : mode === "speed" ? (
+        <SpeedView rows={speedRows} me={speedMe} isGuest={isGuest} />
       ) : (
         <XpView />
       )}
@@ -303,6 +313,90 @@ function EscapeRowItem({
       </div>
       <span className="text-right font-mono text-sm font-bold tabular-nums">
         {formatTime(row.seconds)}
+      </span>
+    </li>
+  );
+}
+
+function SpeedView({
+  rows,
+  me,
+  isGuest,
+}: {
+  rows: SpeedLeaderboardRow[];
+  me: SpeedLeaderboardRow | null;
+  isGuest: boolean;
+}) {
+  const meInTop = me != null && rows.some((r) => r.userId === me.userId);
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <span>Rank</span>
+        <span>Student</span>
+        <span className="text-right">Best</span>
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="px-4 py-10 text-center text-sm text-muted-foreground">
+          No timed scores yet. Run the{" "}
+          <a href="/timed" className="text-primary hover:underline">
+            60-Second Challenge
+          </a>{" "}
+          to claim the top spot!
+        </p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {rows.map((r) => (
+            <SpeedRowItem key={r.userId} row={r} isMe={me?.userId === r.userId} />
+          ))}
+        </ul>
+      )}
+
+      {isGuest ? (
+        <div className="border-t-2 border-dashed border-border bg-muted/40 px-4 py-3 text-center text-sm text-muted-foreground">
+          <a href="/signup" className="font-semibold text-primary hover:underline">
+            Sign up
+          </a>{" "}
+          to record your speed score
+        </div>
+      ) : (
+        me &&
+        !meInTop && (
+          <div className="border-t-2 border-dashed border-border">
+            <SpeedRowItem row={me} isMe />
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
+function SpeedRowItem({ row, isMe }: { row: SpeedLeaderboardRow; isMe: boolean }) {
+  return (
+    <li
+      className={
+        "grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-4 py-3 " +
+        (isMe ? "bg-primary/10" : "")
+      }
+    >
+      <span className="text-center text-sm font-semibold tabular-nums">
+        {MEDALS[row.rank] ?? `#${row.rank}`}
+      </span>
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+          {initials(row.username)}
+        </span>
+        <p className="truncate text-sm font-semibold">
+          {row.username}
+          {isMe && (
+            <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+              YOU
+            </span>
+          )}
+        </p>
+      </div>
+      <span className="text-right text-sm font-bold tabular-nums">
+        {row.score}
       </span>
     </li>
   );

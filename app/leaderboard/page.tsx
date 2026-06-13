@@ -2,7 +2,11 @@ import { auth } from "@/auth";
 import { Nav } from "@/components/Nav";
 import { GuestBanner } from "@/components/GuestBanner";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
-import { loadEscapeLeaderboard, loadLeaderboard } from "@/lib/leaderboard";
+import {
+  loadEscapeLeaderboard,
+  loadLeaderboard,
+  loadSpeedLeaderboard,
+} from "@/lib/leaderboard";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
 // /leaderboard — visible to everyone (Sprint 4 §4.2). Defaults to the Weekly /
@@ -16,6 +20,7 @@ export default async function LeaderboardPage() {
 
   const { rows, me } = await loadLeaderboard("weekly", "all", userId, 50);
   const escape = await loadEscapeLeaderboard(userId, 20);
+  const speed = await loadSpeedLeaderboard(userId, 20);
   const xp = userId != null ? (await loadLoggedInDashboard(userId)).xp : 0;
 
   return (
@@ -38,6 +43,8 @@ export default async function LeaderboardPage() {
           initialMe={me}
           initialEscapeRows={escape.rows}
           initialEscapeMe={escape.me}
+          initialSpeedRows={speed.rows}
+          initialSpeedMe={speed.me}
           isGuest={isGuest}
         />
       </main>

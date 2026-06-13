@@ -1,0 +1,58 @@
+import { eq } from "drizzle-orm";
+import { auth } from "@/auth";
+import { db } from "@/db";
+import { userStats } from "@/db/schema";
+import { Nav } from "@/components/Nav";
+import { GuestBanner } from "@/components/GuestBanner";
+import { TimedSession } from "@/components/TimedSession";
+import { loadAllReactions } from "@/lib/practice";
+import { loadLoggedInDashboard } from "@/lib/dashboard";
+
+// /timed — Module 5 Timed Challenge (Sprint 7 §7.2). 60-second burst mode over
+// the full reaction pool. Logged-in users post their score to the Speed
+// leaderboard and can earn Speed Demon; guests play with localStorage XP only.
+
+export default async function TimedPage() {
+  const session = await auth();
+  const isGuest = !session?.user?.id;
+  const userId = isGuest ? null : Number(session!.user.id);
+
+  const reactions = await loadAllReactions();
+
+  let xp = 0;
+  let best: number | null = null;
+  if (userId != null) {
+    const [dash, statsRow] = await Promise.all([
+      loadLoggedInDashboard(userId),
+      db
+        .select({ best: userStats.bestTimedScore })
+        .from(userStats)
+        .where(eq(userStats.userId, userId))
+        .limit(1),
+    ]);
+    xp = dash.xp;
+    best = statsRow[0]?.best ?? null;
+  }
+
+  return (
+    <>
+      {isGuest && <GuestBanner />}
+      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
+
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
+        <h1 className="mb-1 text-2xl font-bold tracking-tight">
+          ⚡ Timed Challenge
+        </h1>
+        <p className="mb-5 text-sm text-muted-foreground">
+          60 seconds. As many reactions as you can.
+        </p>
+
+        <TimedSession
+          reactions={reactions}
+          isGuest={isGuest}
+          initialBest={best}
+        />
+      </main>
+    </>
+  );
+}

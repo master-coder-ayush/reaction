@@ -168,6 +168,12 @@ export default async function ChapterOverviewPage({
               desc="Identify the named reaction from the equation."
             />
             <ModuleCard
+              href={`/practice/${chapterId}/module-3`}
+              icon="🧩"
+              title="Module 3 · Drag & Drop"
+              desc="Label the mechanism by dragging the pieces."
+            />
+            <ModuleCard
               href={`/practice/${chapterId}/module-4`}
               icon="🧭"
               title="Module 4 · Pathway Challenge"

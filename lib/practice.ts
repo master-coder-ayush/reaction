@@ -70,37 +70,4 @@ export async function loadChapterReactions(
   return { categoryName: category.name, reactions: dto };
 }
 
-// ---------------------------------------------------------------------------
-// Session selection (Sprint 3 §3.1): draw up to N questions, weighted toward
-// reactions the user has answered fewer times. Pure + testable; the page passes
-// per-reaction attempt counts (empty for guests → uniform random).
-// ---------------------------------------------------------------------------
-
-export const SESSION_SIZE = 5;
-
-export function pickSession<T extends { id: number }>(
-  pool: T[],
-  attemptsById: Record<number, number>,
-  size = SESSION_SIZE,
-  rng: () => number = Math.random
-): T[] {
-  const remaining = [...pool];
-  const chosen: T[] = [];
-  const target = Math.min(size, remaining.length);
-
-  while (chosen.length < target && remaining.length > 0) {
-    // Weight = 1 / (attempts + 1): fewer past attempts → higher chance.
-    const weights = remaining.map((r) => 1 / ((attemptsById[r.id] ?? 0) + 1));
-    const totalWeight = weights.reduce((a, b) => a + b, 0);
-    let roll = rng() * totalWeight;
-    let idx = 0;
-    for (; idx < weights.length; idx++) {
-      roll -= weights[idx];
-      if (roll <= 0) break;
-    }
-    if (idx >= remaining.length) idx = remaining.length - 1;
-    chosen.push(remaining.splice(idx, 1)[0]);
-  }
-
-  return chosen;
-}
+// Session-selection helpers live in lib/session.ts (client-safe, no DB import).

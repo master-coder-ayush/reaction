@@ -8,7 +8,7 @@ import {
 } from "@/components/SessionSummary";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { awardGuestXp, recordGuestResult } from "@/lib/guest";
-import { pickSession, SESSION_SIZE } from "@/lib/practice";
+import { pickSession, SESSION_SIZE } from "@/lib/session";
 import { xpForDifficulty } from "@/lib/xp";
 import type { ReactionDTO } from "@/app/api/reactions/route";
 

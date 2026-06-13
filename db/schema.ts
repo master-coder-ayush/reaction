@@ -172,6 +172,8 @@ export const userProgress = pgTable(
     correctCount: integer("correct_count").notNull().default(0),
     lastAttempted: timestamp("last_attempted", { withTimezone: true }),
     mastered: boolean("mastered").notNull().default(false),
+    // Set when this reaction was completed as the Reaction of the Day (2× XP).
+    dailyBonus: boolean("daily_bonus").notNull().default(false),
   },
   (t) => [primaryKey({ columns: [t.userId, t.reactionId] })]
 );

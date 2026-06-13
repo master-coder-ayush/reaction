@@ -2,6 +2,7 @@ import { count, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import {
   badges,
+  pathwayCards,
   reactionCards,
   reactions,
   userBadges,
@@ -115,9 +116,16 @@ async function meetsRequirement(
         .where(eq(reactionCards.userId, userId));
       return total > 0 && owned >= total;
     }
+    case "pathway_completed": {
+      // Pathway Pioneer (Sprint 6 §6.2): held once the user owns ≥1 pathway card.
+      const [{ n }] = await db
+        .select({ n: count() })
+        .from(pathwayCards)
+        .where(eq(pathwayCards.userId, userId));
+      return n >= requirementValue;
+    }
     default:
-      // boss_cleared / perfect_boss / timed_score / pathway_completed — wired up
-      // in later sprints.
+      // boss_cleared / perfect_boss / timed_score — wired up in later sprints.
       return false;
   }
 }

@@ -121,7 +121,13 @@ function ChapterCard({
           unlock this chapter.
         </p>
       ) : (
-        <div className="mt-3 flex items-center gap-4 text-xs font-medium">
+        <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-medium">
+          <Link
+            href={`/learn/${chapter.id}`}
+            className="text-primary hover:underline"
+          >
+            Open chapter →
+          </Link>
           <Link
             href={`/practice/${chapter.id}/module-1`}
             className="text-primary hover:underline"

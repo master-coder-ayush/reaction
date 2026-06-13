@@ -157,6 +157,49 @@ export const pathwaySteps = pgTable(
   (t) => [index("pathway_steps_pathway_idx").on(t.pathwayId)]
 );
 
+// Reaction trees (Sprint 6 §6.3). A tree is the set of nodes + edges for one
+// chapter (category). Nodes are compounds; edges are reagent-labelled, coloured
+// by reaction type. Rendered as a flowchart on /learn/[chapter] and seeded for
+// Hydrocarbons + Haloalkanes. Public — guests read these freely.
+export const treeNodes = pgTable(
+  "tree_nodes",
+  {
+    id: serial("id").primaryKey(),
+    categoryId: integer("category_id")
+      .notNull()
+      .references(() => categories.id, { onDelete: "cascade" }),
+    // Stable key within a chapter (e.g. "alkane") so edges can reference nodes
+    // independently of serial ids across re-seeds.
+    nodeKey: varchar("node_key", { length: 48 }).notNull(),
+    compoundName: text("compound_name").notNull(),
+    // Reaction-type color name (blue/purple/…); the node chip's border color.
+    color: varchar("color", { length: 32 }),
+    // Layout hints for the flowchart (column = depth, row = vertical slot).
+    col: integer("col").notNull().default(0),
+    row: integer("row").notNull().default(0),
+  },
+  (t) => [
+    uniqueIndex("tree_nodes_category_key_idx").on(t.categoryId, t.nodeKey),
+    index("tree_nodes_category_idx").on(t.categoryId),
+  ]
+);
+
+export const treeEdges = pgTable(
+  "tree_edges",
+  {
+    id: serial("id").primaryKey(),
+    categoryId: integer("category_id")
+      .notNull()
+      .references(() => categories.id, { onDelete: "cascade" }),
+    fromKey: varchar("from_key", { length: 48 }).notNull(),
+    toKey: varchar("to_key", { length: 48 }).notNull(),
+    reagentLabel: text("reagent_label").notNull(),
+    // Reaction-type color name for the edge (Reduction=green, etc.).
+    color: varchar("color", { length: 32 }),
+  },
+  (t) => [index("tree_edges_category_idx").on(t.categoryId)]
+);
+
 // ---------------------------------------------------------------------------
 // Progress, badges, cards
 // ---------------------------------------------------------------------------
@@ -221,6 +264,26 @@ export const reactionCards = pgTable(
       .defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.reactionId] })]
+);
+
+// Pathway cards (Sprint 6 §6.1). The collectible earned for completing a
+// pathway challenge. Mirrors `reaction_cards` but keyed by pathway — kept in its
+// own table because reaction_cards' PK is (user, reaction). Shown in the
+// "Pathway Cards" section on /cards.
+export const pathwayCards = pgTable(
+  "pathway_cards",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pathwayId: integer("pathway_id")
+      .notNull()
+      .references(() => reactionPathways.id, { onDelete: "cascade" }),
+    unlockedAt: timestamp("unlocked_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.pathwayId] })]
 );
 
 // ---------------------------------------------------------------------------

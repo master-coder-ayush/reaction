@@ -28,6 +28,9 @@ export function Nav({
           <Link href="/escape-room" className="hover:text-foreground">
             Escape Room
           </Link>
+          <Link href="/cards" className="hover:text-foreground">
+            Cards
+          </Link>
           <Link href="/leaderboard" className="hover:text-foreground">
             Leaderboard
           </Link>

@@ -1,0 +1,78 @@
+import { and, eq, inArray } from "drizzle-orm";
+import { db } from "@/db";
+import { badges, userBadges } from "@/db/schema";
+import { CHAPTERS } from "@/lib/constants";
+
+// ---------------------------------------------------------------------------
+// Chapter gating (Sprint 5 §5.2). A logged-in user unlocks a chapter once they
+// hold the *previous* chapter's boss-clear badge. Chapter 1 (Hydrocarbons) is
+// always unlocked. Guests are never gated (they can't persist progress anyway),
+// so callers pass `userId = null` and treat everything as unlocked.
+//
+// Boss-clear badges are the rows with `requirement_type = 'boss_cleared'`, keyed
+// by `requirement_value = chapter id` (see scripts/seed-sprint5.ts). We resolve
+// chapter → badge once here so both the gate check and the boss-award path agree.
+// ---------------------------------------------------------------------------
+
+/** Map of chapter id → its boss-clear badge id (from the badges table). */
+export async function bossBadgeByChapter(): Promise<Map<number, number>> {
+  const rows = await db
+    .select({ id: badges.id, chapter: badges.requirementValue })
+    .from(badges)
+    .where(eq(badges.requirementType, "boss_cleared"));
+  return new Map(rows.map((r) => [r.chapter, r.id]));
+}
+
+/** Chapters whose boss the user has cleared (set of chapter ids). */
+export async function clearedChapters(userId: number): Promise<Set<number>> {
+  const byChapter = await bossBadgeByChapter();
+  if (byChapter.size === 0) return new Set();
+
+  const badgeIds = Array.from(byChapter.values());
+  const held = await db
+    .select({ badgeId: userBadges.badgeId })
+    .from(userBadges)
+    .where(
+      and(
+        eq(userBadges.userId, userId),
+        inArray(userBadges.badgeId, badgeIds)
+      )
+    );
+  const heldSet = new Set(held.map((h) => h.badgeId));
+
+  const cleared = new Set<number>();
+  for (const [chapter, badgeId] of byChapter) {
+    if (heldSet.has(badgeId)) cleared.add(chapter);
+  }
+  return cleared;
+}
+
+/** The set of unlocked chapter ids for a user (chapter 1 + any whose prereq is cleared). */
+export async function unlockedChapters(userId: number): Promise<Set<number>> {
+  const cleared = await clearedChapters(userId);
+  const unlocked = new Set<number>();
+  for (const chapter of CHAPTERS) {
+    if (chapter.unlockedBy === null || cleared.has(chapter.unlockedBy)) {
+      unlocked.add(chapter.id);
+    }
+  }
+  return unlocked;
+}
+
+/**
+ * Is `chapterId` unlocked for this user? Guests (userId null) and chapter 1 are
+ * always unlocked; otherwise the previous chapter's boss must be cleared.
+ */
+export async function isChapterUnlocked(
+  userId: number | null,
+  chapterId: number
+): Promise<boolean> {
+  const chapter = CHAPTERS.find((c) => c.id === chapterId);
+  // Unknown chapter or no prerequisite → open.
+  if (!chapter || chapter.unlockedBy === null) return true;
+  // Guests are never gated.
+  if (userId == null) return true;
+
+  const cleared = await clearedChapters(userId);
+  return cleared.has(chapter.unlockedBy);
+}

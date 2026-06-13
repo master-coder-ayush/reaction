@@ -53,6 +53,8 @@ export const userStats = pgTable("user_stats", {
   lastActivityDate: date("last_activity_date"),
   totalCorrect: integer("total_correct").notNull().default(0),
   totalAttempts: integer("total_attempts").notNull().default(0),
+  // Best Escape Room time in seconds (Sprint 5 §5.4). Null until first escape.
+  escapeBestSeconds: integer("escape_best_seconds"),
 });
 
 // ---------------------------------------------------------------------------
@@ -219,6 +221,48 @@ export const reactionCards = pgTable(
       .defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.reactionId] })]
+);
+
+// ---------------------------------------------------------------------------
+// Boss levels & Escape Room (Sprint 5)
+// ---------------------------------------------------------------------------
+
+// One row per user per chapter per calendar day, tracking how many boss attempts
+// were spent that day (capped at 3 — Sprint 5 §5.1). Checked on entry,
+// incremented on submit.
+export const bossAttempts = pgTable(
+  "boss_attempts",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Chapter id (category order_index), matching the UI chapter map.
+    chapter: integer("chapter").notNull(),
+    attemptDate: date("attempt_date").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.chapter, t.attemptDate] }),
+  ]
+);
+
+// One row per completed Escape Room run (Sprint 5 §5.4). The fastest per user is
+// what the Escape Room leaderboard ranks; userStats.escapeBestSeconds caches it.
+export const escapeRoomResults = pgTable(
+  "escape_room_results",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // 11 / 12 — which class track was escaped.
+    classLevel: varchar("class_level", { length: 8 }).notNull(),
+    seconds: integer("seconds").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("escape_room_results_user_idx").on(t.userId)]
 );
 
 // ---------------------------------------------------------------------------

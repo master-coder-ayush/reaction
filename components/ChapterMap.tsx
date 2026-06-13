@@ -82,8 +82,12 @@ function ChapterCard({
   const total = progress?.total ?? 0;
   const mastered = progress?.mastered ?? 0;
   const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+  const prevName =
+    chapter.unlockedBy != null
+      ? CHAPTERS.find((c) => c.id === chapter.unlockedBy)?.name ?? null
+      : null;
 
-  const inner = (
+  return (
     <div
       className={
         "h-full rounded-2xl border bg-card p-5 shadow-sm transition-colors " +
@@ -111,19 +115,27 @@ function ChapterCard({
           : "No reactions yet"}
       </p>
 
-      {locked && (
+      {locked ? (
         <p className="mt-2 text-xs text-muted-foreground">
-          Clear Chapter {chapter.unlockedBy}&apos;s boss to unlock.
+          Clear the {prevName ?? `Chapter ${chapter.unlockedBy}`} Boss Level to
+          unlock this chapter.
         </p>
+      ) : (
+        <div className="mt-3 flex items-center gap-4 text-xs font-medium">
+          <Link
+            href={`/practice/${chapter.id}/module-1`}
+            className="text-primary hover:underline"
+          >
+            Practice →
+          </Link>
+          <Link
+            href={`/boss/${chapter.id}`}
+            className="text-orange-600 hover:underline dark:text-orange-400"
+          >
+            ⚔️ Boss Level
+          </Link>
+        </div>
       )}
     </div>
-  );
-
-  if (locked) return <div>{inner}</div>;
-
-  return (
-    <Link href={`/practice/${chapter.id}/module-1`} className="block">
-      {inner}
-    </Link>
   );
 }

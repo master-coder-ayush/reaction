@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, isNotNull } from "drizzle-orm";
 import { db } from "@/db";
 import { leaderboardSnapshots, userStats, users } from "@/db/schema";
 import { LEVELS } from "@/lib/constants";
@@ -200,6 +200,53 @@ function rankAndSlice(
     ...r,
     rank: i + 1,
     levelTitle: levelTitle(r.level),
+  }));
+
+  const rows = ranked.slice(0, limit);
+  const me =
+    callerId != null ? ranked.find((r) => r.userId === callerId) ?? null : null;
+
+  return { rows, me };
+}
+
+// ---------------------------------------------------------------------------
+// Escape Room leaderboard (Sprint 5 §5.5). Ranks users by their best escape time
+// (fastest first) — this reads userStats.escapeBestSeconds, which the escape
+// completion route keeps as the user's personal best.
+// ---------------------------------------------------------------------------
+
+export type EscapeLeaderboardRow = {
+  userId: number;
+  rank: number;
+  username: string;
+  seconds: number;
+};
+
+export type EscapeLeaderboardResult = {
+  rows: EscapeLeaderboardRow[];
+  me: EscapeLeaderboardRow | null;
+};
+
+export async function loadEscapeLeaderboard(
+  callerId: number | null,
+  limit = 20
+): Promise<EscapeLeaderboardResult> {
+  const all = await db
+    .select({
+      userId: users.id,
+      username: users.username,
+      seconds: userStats.escapeBestSeconds,
+    })
+    .from(userStats)
+    .innerJoin(users, eq(userStats.userId, users.id))
+    .where(isNotNull(userStats.escapeBestSeconds))
+    .orderBy(asc(userStats.escapeBestSeconds));
+
+  const ranked: EscapeLeaderboardRow[] = all.map((r, i) => ({
+    userId: r.userId,
+    username: r.username,
+    seconds: r.seconds ?? 0,
+    rank: i + 1,
   }));
 
   const rows = ranked.slice(0, limit);

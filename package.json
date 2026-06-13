@@ -13,7 +13,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed.ts",
     "db:seed:reactions": "tsx scripts/seed-reactions.ts",
-    "db:seed:named": "tsx scripts/seed-named-reactions.ts"
+    "db:seed:named": "tsx scripts/seed-named-reactions.ts",
+    "db:seed:sprint5": "tsx scripts/seed-sprint5.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

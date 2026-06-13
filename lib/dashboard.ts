@@ -9,6 +9,7 @@ import {
   userStats,
 } from "@/db/schema";
 import { CHAPTERS } from "@/lib/constants";
+import { unlockedChapters } from "@/lib/chapters";
 import { projectBrokenStreak, todayString } from "@/lib/streak";
 import type { DailyChallenge } from "@/components/ReactionOfTheDay";
 import type { ChapterProgress } from "@/components/ChapterMap";
@@ -157,19 +158,9 @@ export async function loadLoggedInDashboard(
         };
       }
 
-      // Unlock logic stub (Sprint 5 replaces with boss clears): chapter 1 always
-      // unlocked; a chapter unlocks once the previous chapter is fully mastered.
-      const unlocked = new Set<number>([1]);
-      for (const chapter of CHAPTERS) {
-        if (chapter.unlockedBy === null) {
-          unlocked.add(chapter.id);
-          continue;
-        }
-        const prev = chapterProgress[chapter.unlockedBy];
-        if (prev && prev.total > 0 && prev.mastered >= prev.total) {
-          unlocked.add(chapter.id);
-        }
-      }
+      // Unlock logic (Sprint 5 §5.2): chapter 1 always unlocked; each later
+      // chapter unlocks once the previous chapter's boss badge is earned.
+      const unlocked = await unlockedChapters(userId);
 
       // "Continue where you left off": first unlocked chapter not yet complete.
       const continueChapter =

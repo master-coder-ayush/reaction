@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { asc, eq, inArray } from "drizzle-orm";
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { categories, reactions, reactionOptions, reactionTypes } from "@/db/schema";
+import { isChapterUnlocked } from "@/lib/chapters";
 
 // GET /api/reactions?chapter=[orderIndex]&module=1
 //
@@ -45,6 +47,17 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: "A valid `chapter` (category order index) is required." },
       { status: 400 }
+    );
+  }
+
+  // Chapter gating (Sprint 5 §5.2): logged-in users can only fetch reactions for
+  // chapters they've unlocked. Guests are never gated.
+  const session = await auth();
+  const callerId = session?.user?.id ? Number(session.user.id) : null;
+  if (callerId != null && !(await isChapterUnlocked(callerId, chapter))) {
+    return NextResponse.json(
+      { error: "Chapter locked. Clear the previous chapter's boss to unlock.", chapter },
+      { status: 403 }
     );
   }
 

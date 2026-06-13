@@ -27,6 +27,9 @@ export const GUEST_PROGRESS_KEY = "luc_guest_progress"; // JSON array of reactio
 export const GUEST_XP_LOG_KEY = "luc_guest_xp_log"; // JSON array of { amount, action, at }
 // One-time welcome banner flag, set on the sign-up redirect.
 export const WELCOME_NAME_KEY = "luc_welcome_name";
+// Guest accuracy counters (Sprint 3 §3.5): correct / attempts tracked locally.
+export const GUEST_CORRECT_KEY = "luc_guest_correct";
+export const GUEST_ATTEMPTS_KEY = "luc_guest_attempts";
 
 // ---------------------------------------------------------------------------
 // Chapter map (PLAN.md §6 "Chapter Structure"). The boss-gating logic is

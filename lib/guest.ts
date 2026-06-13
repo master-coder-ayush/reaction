@@ -4,6 +4,8 @@ import {
   GUEST_XP_KEY,
   GUEST_PROGRESS_KEY,
   GUEST_XP_LOG_KEY,
+  GUEST_CORRECT_KEY,
+  GUEST_ATTEMPTS_KEY,
 } from "@/lib/constants";
 import { applyXp, type AwardResult } from "@/lib/xp";
 
@@ -103,6 +105,48 @@ export function recordGuestAttempt(reactionId: number): void {
       GUEST_PROGRESS_KEY,
       JSON.stringify(Array.from(ids))
     );
+  } catch {
+    /* ignore */
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Guest accuracy (Sprint 3 §3.5): correct / attempts, tracked in localStorage.
+// ---------------------------------------------------------------------------
+
+export type GuestAccuracy = { correct: number; attempts: number };
+
+export function readGuestAccuracy(): GuestAccuracy {
+  if (typeof window === "undefined") return { correct: 0, attempts: 0 };
+  try {
+    return {
+      correct: safeNumber(window.localStorage.getItem(GUEST_CORRECT_KEY)),
+      attempts: safeNumber(window.localStorage.getItem(GUEST_ATTEMPTS_KEY)),
+    };
+  } catch {
+    return { correct: 0, attempts: 0 };
+  }
+}
+
+/**
+ * Record one guest answer: bump `guest_attempts`, and `guest_correct` when the
+ * answer was right. Also records the attempted reaction id for sign-up migration.
+ */
+export function recordGuestResult(reactionId: number, correct: boolean): void {
+  recordGuestAttempt(reactionId);
+  if (typeof window === "undefined") return;
+  try {
+    const acc = readGuestAccuracy();
+    window.localStorage.setItem(
+      GUEST_ATTEMPTS_KEY,
+      String(acc.attempts + 1)
+    );
+    if (correct) {
+      window.localStorage.setItem(
+        GUEST_CORRECT_KEY,
+        String(acc.correct + 1)
+      );
+    }
   } catch {
     /* ignore */
   }

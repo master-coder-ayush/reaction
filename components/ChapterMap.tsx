@@ -122,7 +122,7 @@ function ChapterCard({
   if (locked) return <div>{inner}</div>;
 
   return (
-    <Link href={`/learn/${chapter.id}`} className="block">
+    <Link href={`/practice/${chapter.id}/module-1`} className="block">
       {inner}
     </Link>
   );

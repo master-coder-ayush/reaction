@@ -1,0 +1,1 @@
+ALTER TABLE "user_progress" ADD COLUMN "daily_bonus" boolean DEFAULT false NOT NULL;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { BadgeRevealModal } from "@/components/BadgeRevealModal";
@@ -41,6 +42,18 @@ export default function RootLayout({
       lang="en"
       className={`${nunito.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-V6S5NQPMJN"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-V6S5NQPMJN');
+        `}</Script>
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
         <BadgeRevealModal />

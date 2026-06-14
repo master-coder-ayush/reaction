@@ -12,83 +12,83 @@
   color-scheme: light;
 
   --background: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
+  --foreground: #0d1033; /* dark violet */
 
   /* Surface tokens used by cards, inputs, borders */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --muted: #f4f6fb;            /* cool off-white */
-  --muted-foreground: #64748b; /* slate-500 */
-  --border: #e7ebf3;           /* soft cool border */
-  --input: #e2e8f0;
-  --ring: #6366f1;             /* indigo focus ring reads on any accent */
+  --card: #ffe88f;
+  --card-foreground: #0d1033;
+  --popover: #ffd4ff;
+  --popover-foreground: #0d1033;
+  --muted: #ffde7a;            /* bright gold */
+  --muted-foreground: #2a0b5e; /* deep violet */
+  --border: #ffac00;           /* electric orange */
+  --input: #ffe1a8;
+  --ring: #ff3dff;             /* neon pink focus ring */
 
   /* ----------------------------------------------------------------------
-   * Balanced multi-color palette. Each accent has: base, -foreground,
+   * Bright multi-color palette. Each accent has: base, -foreground,
    * -border (chunky button edge), -soft (tinted surface for cards/chips).
    * -------------------------------------------------------------------- */
 
   /* Green — primary / success */
-  --primary: #22c55e;
+  --primary: #00b3ff;
   --primary-foreground: #ffffff;
-  --primary-border: #16a34a;
-  --primary-soft: #dcfce7;
+  --primary-border: #0088e5;
+  --primary-soft: #ccf0ff;
 
   /* Blue — secondary */
-  --secondary: #3b82f6;
+  --secondary: #ff00b3;
   --secondary-foreground: #ffffff;
-  --secondary-border: #2563eb;
-  --secondary-soft: #dbeafe;
+  --secondary-border: #d6008c;
+  --secondary-soft: #ffd6f5;
 
   /* Purple — accent */
-  --accent: #8b5cf6;
+  --accent: #7c00ff;
   --accent-foreground: #ffffff;
-  --accent-border: #7c3aed;
-  --accent-soft: #ede9fe;
+  --accent-border: #6000d1;
+  --accent-soft: #e6ccff;
 
   /* Teal — info */
-  --info: #14b8a6;
-  --info-foreground: #ffffff;
-  --info-border: #0d9488;
-  --info-soft: #ccfbf1;
+  --info: #00ffd6;
+  --info-foreground: #0d1033;
+  --info-border: #00c2a8;
+  --info-soft: #ccfff5;
 
   /* Orange — warn / energy */
-  --warn: #f97316;
-  --warn-foreground: #ffffff;
-  --warn-border: #ea580c;
-  --warn-soft: #ffedd5;
+  --warn: #ff8c00;
+  --warn-foreground: #000000;
+  --warn-border: #d47400;
+  --warn-soft: #ffe0b3;
 
   /* Pink — highlight */
-  --pink: #ec4899;
+  --pink: #ff1f7a;
   --pink-foreground: #ffffff;
-  --pink-border: #db2777;
-  --pink-soft: #fce7f3;
+  --pink-border: #d1005e;
+  --pink-soft: #ffbfdc;
 
   /* Red — destructive */
-  --destructive: #ef4444;
+  --destructive: #ff1744;
   --destructive-foreground: #ffffff;
-  --destructive-border: #dc2626;
-  --destructive-soft: #fee2e2;
+  --destructive-border: #d10028;
+  --destructive-soft: #ffb3c4;
 
   /* Status helpers */
-  --success: #22c55e;
-  --warning: #f59e0b;          /* amber / gold */
-  --warning-foreground: #ffffff;
-  --warning-soft: #fef3c7;
+  --success: #00d25a;
+  --warning: #ffdc00;
+  --warning-foreground: #000000;
+  --warning-soft: #fff8b3;
 
   /* Reaction-type colors (content semantics — unchanged values) */
-  --reaction-addition: #3b82f6;     /* blue   */
-  --reaction-substitution: #a855f7; /* purple */
-  --reaction-elimination: #f97316;  /* orange */
-  --reaction-oxidation: #ef4444;    /* red    */
-  --reaction-reduction: #22c55e;    /* green  */
-  --reaction-nucleophilic: #14b8a6; /* teal   */
-  --reaction-electrophilic: #eab308;/* yellow */
+  --reaction-addition: #00b3ff;     /* blue   */
+  --reaction-substitution: #7c00ff; /* purple */
+  --reaction-elimination: #ff8c00;  /* orange */
+  --reaction-oxidation: #ff1744;    /* red    */
+  --reaction-reduction: #00d25a;    /* green  */
+  --reaction-nucleophilic: #00ffd6; /* teal   */
+  --reaction-electrophilic: #ffea00;/* yellow */
 
   /* Soft, modern shadow color */
-  --shadow-color: 220 40% 65%;
+  --shadow-color: 290 100% 50%;
 
   /* Playful, rounded radius (16px) */
   --radius: 1rem;
@@ -151,10 +151,23 @@
   --font-mono: var(--font-mono-app);
 }
 
+html,
+body {
+  min-height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), "Nunito", "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a{
+    color: var(--foreground) !important;
 }
 
 /* ------------------------------------------------------------------------
@@ -197,22 +210,22 @@ body {
 
 /* Soft diagonal gradients for banners / headers. */
 .gradient-brand {
-  background-image: linear-gradient(135deg, #22c55e 0%, #14b8a6 50%, #3b82f6 100%);
+  background-image: linear-gradient(135deg, #00b3ff 0%, #7c00ff 50%, #ff00b3 100%);
 }
 .gradient-blue {
-  background-image: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  background-image: linear-gradient(135deg, #00b3ff 0%, #00c2ff 100%);
 }
 .gradient-purple {
-  background-image: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  background-image: linear-gradient(135deg, #7c00ff 0%, #ff1f7a 100%);
 }
 .gradient-warm {
-  background-image: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  background-image: linear-gradient(135deg, #ff8c00 0%, #ff1f7a 100%);
 }
 .gradient-teal {
-  background-image: linear-gradient(135deg, #14b8a6 0%, #3b82f6 100%);
+  background-image: linear-gradient(135deg, #00ffd6 0%, #00b3ff 100%);
 }
 .gradient-sunrise {
-  background-image: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ec4899 100%);
+  background-image: linear-gradient(135deg, #ffdc00 0%, #ff8c00 50%, #ff1f7a 100%);
 }
 
 /* Subtle tinted page wash for shell content areas. */

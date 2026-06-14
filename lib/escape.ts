@@ -18,7 +18,6 @@ export {
   ESCAPE_REACTIONS_PER_DOOR,
   ESCAPE_CLUE_COST,
   ESCAPE_XP_AWARD,
-  formatTime,
   type EscapeReaction,
   type EscapeDoor,
 } from "@/lib/escape-client";

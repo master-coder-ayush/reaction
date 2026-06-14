@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
+import { Settings as SettingsIcon } from "lucide-react";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { Nav } from "@/components/Nav";
+import { AppShell } from "@/components/AppShell";
 import { SettingsForm } from "@/components/SettingsForm";
 
 export const metadata = {
@@ -37,10 +38,14 @@ export default async function SettingsPage() {
   }
 
   return (
-    <>
-      <Nav isGuest={false} username={user.username} />
+    <AppShell isGuest={false} username={user.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold tracking-tight">Settings</h1>
+        <div className="fade-rise mb-6 flex items-center gap-3">
+          <span className="icon-chip bg-muted text-muted-foreground">
+            <SettingsIcon className="h-5 w-5" />
+          </span>
+          <h1 className="text-2xl font-extrabold tracking-tight">Settings</h1>
+        </div>
         <SettingsForm
           username={user.username}
           initialName={user.name}
@@ -49,6 +54,6 @@ export default async function SettingsPage() {
           initialIsPublic={user.isPublic}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

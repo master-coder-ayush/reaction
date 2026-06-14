@@ -117,10 +117,10 @@ export function LeaderboardTable({
             type="button"
             onClick={() => setMode(m.key)}
             className={
-              "flex-1 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors " +
+              "flex-1 rounded-xl border px-3 py-2 text-sm font-bold transition-colors " +
               (mode === m.key
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border text-muted-foreground hover:border-primary/50")
+                ? "border-warning bg-warning-soft text-warn-border"
+                : "border-border text-muted-foreground hover:border-warning/50")
             }
           >
             {m.label}
@@ -149,9 +149,9 @@ export function LeaderboardTable({
             type="button"
             onClick={() => setPeriod(t.key)}
             className={
-              "flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors " +
+              "flex-1 rounded-lg px-3 py-1.5 text-sm font-bold transition-colors " +
               (period === t.key
-                ? "bg-card text-foreground shadow-sm"
+                ? "bg-card text-warn-border shadow-soft"
                 : "text-muted-foreground hover:text-foreground")
             }
           >
@@ -168,10 +168,10 @@ export function LeaderboardTable({
             type="button"
             onClick={() => setClassFilter(f.key)}
             className={
-              "rounded-full border px-3 py-1 text-xs font-medium transition-colors " +
+              "rounded-full border px-3 py-1 text-xs font-bold transition-colors " +
               (classFilter === f.key
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border text-muted-foreground hover:border-primary/50")
+                ? "border-warning bg-warning-soft text-warn-border"
+                : "border-border text-muted-foreground hover:border-warning/50")
             }
           >
             {f.label}
@@ -180,7 +180,7 @@ export function LeaderboardTable({
       </div>
 
       {/* Table */}
-      <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
         <div className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           <span>Rank</span>
           <span>Student</span>
@@ -243,7 +243,7 @@ function EscapeView({
 }) {
   const meInTop = me != null && rows.some((r) => r.userId === me.userId);
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
       <div className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <span>Rank</span>
         <span>Student</span>
@@ -292,20 +292,20 @@ function EscapeRowItem({
     <li
       className={
         "grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-4 py-3 " +
-        (isMe ? "bg-primary/10" : "")
+        (isMe ? "bg-warning-soft" : "")
       }
     >
       <span className="text-center text-sm font-semibold tabular-nums">
         {MEDALS[row.rank] ?? `#${row.rank}`}
       </span>
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
         <p className="truncate text-sm font-semibold">
           {row.username}
           {isMe && (
-            <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+            <span className="ml-1.5 rounded-full bg-warning px-1.5 py-0.5 text-[10px] font-extrabold text-warning-foreground">
               YOU
             </span>
           )}
@@ -329,7 +329,7 @@ function SpeedView({
 }) {
   const meInTop = me != null && rows.some((r) => r.userId === me.userId);
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
       <div className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <span>Rank</span>
         <span>Student</span>
@@ -376,20 +376,20 @@ function SpeedRowItem({ row, isMe }: { row: SpeedLeaderboardRow; isMe: boolean }
     <li
       className={
         "grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-4 py-3 " +
-        (isMe ? "bg-primary/10" : "")
+        (isMe ? "bg-warning-soft" : "")
       }
     >
       <span className="text-center text-sm font-semibold tabular-nums">
         {MEDALS[row.rank] ?? `#${row.rank}`}
       </span>
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
         <p className="truncate text-sm font-semibold">
           {row.username}
           {isMe && (
-            <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+            <span className="ml-1.5 rounded-full bg-warning px-1.5 py-0.5 text-[10px] font-extrabold text-warning-foreground">
               YOU
             </span>
           )}
@@ -413,7 +413,7 @@ function LeaderboardRowItem({
     <li
       className={
         "grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-4 py-3 " +
-        (isMe ? "bg-primary/10" : "")
+        (isMe ? "bg-warning-soft" : "")
       }
     >
       <span className="text-center text-sm font-semibold tabular-nums">
@@ -421,14 +421,14 @@ function LeaderboardRowItem({
       </span>
 
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">
             {row.username}
             {isMe && (
-              <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+              <span className="ml-1.5 rounded-full bg-warning px-1.5 py-0.5 text-[10px] font-extrabold text-warning-foreground">
                 YOU
               </span>
             )}

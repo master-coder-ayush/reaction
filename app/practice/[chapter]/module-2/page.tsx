@@ -3,8 +3,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { userProgress } from "@/db/schema";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { PracticeSession } from "@/components/PracticeSession";
 import { loadNamedReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
@@ -65,10 +64,7 @@ export default async function Module2Page({
   const chapterMeta = CHAPTERS.find((c) => c.id === chapterId);
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <div className="mb-4 flex items-center justify-between">
           <div>
@@ -120,6 +116,6 @@ export default async function Module2Page({
           />
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

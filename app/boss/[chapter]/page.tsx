@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { BossEntry } from "@/components/BossEntry";
 import { attemptsToday, loadBossQuestions } from "@/lib/boss";
 import { bossBadgeByChapter, isChapterUnlocked } from "@/lib/chapters";
@@ -98,10 +97,8 @@ export default async function BossPage({
   }
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">{body}</main>
-    </>
+    </AppShell>
   );
 }

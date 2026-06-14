@@ -29,13 +29,13 @@ export function LabelSlot({
 
   const border =
     state === "correct"
-      ? "border-success bg-success/10 text-success"
+      ? "border-primary bg-primary-soft text-primary-border"
       : state === "wrong"
-        ? "animate-pulse border-destructive bg-destructive/10 text-destructive"
+        ? "animate-pulse border-destructive bg-destructive-soft text-destructive-border"
         : isOver
-          ? "border-primary bg-primary/15"
+          ? "border-secondary bg-secondary-soft"
           : placedLabel
-            ? "border-primary/60 bg-primary/5"
+            ? "border-secondary/60 bg-secondary-soft/50"
             : "border-dashed border-muted-foreground/50 bg-card/80";
 
   return (
@@ -49,7 +49,7 @@ export function LabelSlot({
         transform: "translate(-50%, -50%)",
       }}
       className={
-        "absolute flex min-h-9 min-w-24 items-center justify-center rounded-lg border-2 px-2 py-1 text-center text-xs font-semibold transition-colors " +
+        "absolute flex min-h-9 min-w-24 items-center justify-center rounded-xl border-2 px-2 py-1 text-center text-xs font-bold transition-colors " +
         border
       }
     >

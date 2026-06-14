@@ -74,11 +74,11 @@ export function PracticeSession({
   // server renders this branch too, so server/client markup matches.)
   if (session === null) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-        <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+      <div className="card-soft p-6">
+        <div className="h-4 w-32 animate-pulse rounded-full bg-muted" />
         <div className="mt-4 space-y-2.5">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-12 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-12 animate-pulse rounded-2xl bg-muted" />
           ))}
         </div>
       </div>
@@ -88,9 +88,9 @@ export function PracticeSession({
   // Empty chapter / no reactions edge case (Sprint 3 journey edge case).
   if (session.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft p-6 text-center">
         <div className="text-3xl">🎓</div>
-        <h2 className="mt-2 text-lg font-semibold">
+        <h2 className="mt-2 text-lg font-extrabold tracking-tight">
           You&apos;ve practiced all reactions!
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">

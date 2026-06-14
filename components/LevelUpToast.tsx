@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PartyPopper } from "lucide-react";
 
 /**
  * Level-up toast/animation (Sprint 2 §2.5). Listens for a global `level-up`
@@ -27,11 +28,17 @@ export function LevelUpToast() {
   if (!title) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-6 z-50 flex justify-center">
-      <div className="level-up-pop rounded-2xl border border-primary/40 bg-card px-6 py-4 text-center shadow-lg">
-        <div className="text-2xl">🎉</div>
-        <div className="mt-1 text-sm font-semibold">Level up!</div>
-        <div className="text-xs text-muted-foreground">{title}</div>
+    <div className="pointer-events-none fixed inset-x-0 top-6 z-50 flex justify-center px-4">
+      <div className="level-up-pop overflow-hidden rounded-2xl bg-card text-center shadow-soft-lg ring-1 ring-accent/20">
+        <div className="gradient-purple px-6 py-3 text-white">
+          <PartyPopper className="mx-auto h-7 w-7" aria-hidden />
+          <div className="mt-1 text-sm font-extrabold tracking-tight">
+            Level up!
+          </div>
+        </div>
+        <div className="px-6 py-3 text-sm font-bold text-accent-border">
+          {title}
+        </div>
       </div>
     </div>
   );

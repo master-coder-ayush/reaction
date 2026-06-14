@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Zap } from "lucide-react";
 import { readGuestXp } from "@/lib/guest";
 
 /**
@@ -32,10 +33,10 @@ export function SessionXpCounter({
   }, [isGuest]);
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm font-semibold">
-      <span aria-hidden>⚡</span>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-sm font-extrabold text-primary-border">
+      <Zap className="h-3.5 w-3.5 fill-current" aria-hidden />
       <span className="tabular-nums">{xp}</span>
-      <span className="text-muted-foreground">XP</span>
+      <span className="text-primary-border/70">XP</span>
     </span>
   );
 }

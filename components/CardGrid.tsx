@@ -45,7 +45,7 @@ export function CardGrid({
 
   return (
     <div>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 text-sm font-semibold text-muted-foreground">
         {isGuest
           ? `${cards.length} reactions to collect — sign up to start keeping cards`
           : `${unlockedCount} / ${cards.length} cards collected`}
@@ -58,7 +58,7 @@ export function CardGrid({
           onChange={(e) =>
             setChapter(e.target.value === "all" ? "all" : Number(e.target.value))
           }
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm"
+          className="rounded-xl border border-border bg-card px-3 py-1.5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <option value="all">All chapters</option>
           {chapters.map(([id, name]) => (
@@ -71,7 +71,7 @@ export function CardGrid({
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm"
+          className="rounded-xl border border-border bg-card px-3 py-1.5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <option value="all">All types</option>
           {types.map((t) => (
@@ -82,12 +82,12 @@ export function CardGrid({
         </select>
 
         {!isGuest && (
-          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm">
+          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-sm font-semibold">
             <input
               type="checkbox"
               checked={unlockedOnly}
               onChange={(e) => setUnlockedOnly(e.target.checked)}
-              className="accent-primary"
+              className="accent-pink"
             />
             Unlocked only
           </label>
@@ -95,7 +95,7 @@ export function CardGrid({
       </div>
 
       {filtered.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
+        <div className="card-soft mt-6 p-8 text-center text-sm text-muted-foreground">
           No cards match these filters.
         </div>
       ) : (

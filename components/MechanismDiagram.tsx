@@ -24,7 +24,7 @@ export function MechanismDiagram({
   onSlotTap: (slotKey: string) => void;
 }) {
   return (
-    <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-muted/40 to-background">
+    <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-secondary-soft/50 via-card to-info-soft/40 shadow-soft">
       {/* The reaction structure, centred. */}
       <div className="pointer-events-none absolute inset-x-0 top-6 text-center">
         <p className="px-4 font-mono text-base font-semibold tracking-wide">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { AtSign, Eye, EyeOff, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -44,29 +45,36 @@ export function LoginForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <h2 className="text-lg font-semibold">Log in</h2>
+      <h2 className="text-xl font-extrabold tracking-tight">Log in</h2>
 
       {message && (
-        <p className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+        <p className="rounded-xl bg-secondary-soft px-3 py-2 text-sm font-medium text-secondary-border">
           {message}
         </p>
       )}
 
       <div>
-        <label htmlFor="identifier" className="mb-1.5 block text-sm font-medium">
+        <label
+          htmlFor="identifier"
+          className="mb-1.5 block text-sm font-semibold"
+        >
           Email or Username
         </label>
-        <Input
-          id="identifier"
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
-          autoComplete="username"
-          required
-        />
+        <div className="relative">
+          <AtSign className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="identifier"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            autoComplete="username"
+            required
+            className="pl-10"
+          />
+        </div>
       </div>
 
       <div>
-        <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
+        <label htmlFor="password" className="mb-1.5 block text-sm font-semibold">
           Password
         </label>
         <div className="relative">
@@ -77,26 +85,35 @@ export function LoginForm({
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
             required
-            className="pr-16"
+            className="pr-12"
           />
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            {showPassword ? "Hide" : "Show"}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
         {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
       </div>
 
       <Button type="submit" className="w-full" disabled={submitting}>
+        <LogIn className="h-4 w-4" />
         {submitting ? "Logging in…" : "Log in"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         New here?{" "}
-        <Link href="/signup" className="font-medium text-primary hover:underline">
+        <Link
+          href="/signup"
+          className="font-bold text-primary hover:underline"
+        >
           Create an account
         </Link>
       </p>

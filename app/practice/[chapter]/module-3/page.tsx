@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { MechanismList } from "@/components/MechanismList";
 import { loadChapterMechanisms } from "@/lib/mechanism";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
@@ -33,10 +32,7 @@ export default async function Module3Page({
   const chapterMeta = CHAPTERS.find((c) => c.id === chapterId);
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <div className="mb-4">
           <Link
@@ -65,6 +61,6 @@ export default async function Module3Page({
           <MechanismList mechanisms={mechanisms} isGuest={isGuest} />
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

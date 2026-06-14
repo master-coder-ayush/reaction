@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { EscapeRoomEntry } from "@/components/EscapeRoomEntry";
 import { loadEscapeRoom } from "@/lib/escape";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
@@ -21,15 +20,13 @@ export default async function EscapeRoomPage() {
   ]);
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <EscapeRoomEntry
           doorsByClass={{ "11": doors11, "12": doors12 }}
           isGuest={isGuest}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

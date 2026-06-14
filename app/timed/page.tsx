@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
+import { Zap } from "lucide-react";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { userStats } from "@/db/schema";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { TimedSession } from "@/components/TimedSession";
 import { loadAllReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
@@ -37,17 +37,21 @@ export default async function TimedPage() {
   }
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-        <h1 className="mb-1 text-2xl font-bold tracking-tight">
-          ⚡ Timed Challenge
-        </h1>
-        <p className="mb-5 text-sm text-muted-foreground">
-          60 seconds. As many reactions as you can.
-        </p>
+        <div className="mb-5 flex items-center gap-3">
+          <span className="icon-chip bg-warn-soft text-warn-border" aria-hidden>
+            <Zap className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              Timed Challenge
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              60 seconds. As many reactions as you can.
+            </p>
+          </div>
+        </div>
 
         <TimedSession
           reactions={reactions}
@@ -55,6 +59,6 @@ export default async function TimedPage() {
           initialBest={best}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

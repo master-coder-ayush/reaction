@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Timer } from "lucide-react";
 
 // Boss countdown timer (Sprint 5 §5.1). Counts down from `seconds`; calls
 // `onExpire` exactly once when it hits 0 so the session can auto-submit. Turns
@@ -43,14 +44,14 @@ export function BossTimer({
   return (
     <span
       className={
-        "rounded-lg px-2.5 py-1 font-mono text-sm font-bold tabular-nums " +
+        "inline-flex items-center gap-1 rounded-lg px-2.5 py-1 font-mono text-sm font-bold tabular-nums " +
         (urgent
-          ? "animate-pulse bg-destructive/15 text-destructive"
+          ? "animate-pulse bg-destructive-soft text-destructive-border"
           : "bg-muted text-foreground")
       }
       aria-label={`Time remaining ${mm}:${ss}`}
     >
-      ⏱ {mm}:{ss}
+      <Timer className="h-4 w-4" aria-hidden /> {mm}:{ss}
     </span>
   );
 }

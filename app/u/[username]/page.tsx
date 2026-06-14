@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowLeft, Lock, Settings as SettingsIcon, Flame } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { BadgeGrid } from "@/components/BadgeGrid";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
 import { loadProfile, avatarHue } from "@/lib/profile";
@@ -47,19 +48,23 @@ export default async function ProfilePage({
 
   if (!profile) {
     return (
-      <>
-        {isGuest && <GuestBanner />}
-        <Nav isGuest={isGuest} username={viewerUsername} />
+      <AppShell isGuest={isGuest} username={viewerUsername}>
         <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-16 text-center">
-          <h1 className="text-xl font-bold">User not found</h1>
+          <h1 className="text-xl font-extrabold tracking-tight">
+            User not found
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             No student with username “{username}”.
           </p>
-          <Link href="/" className="mt-4 inline-block text-primary hover:underline">
-            ← Home
+          <Link
+            href="/"
+            className="mt-4 inline-flex items-center gap-1.5 font-semibold text-primary hover:underline"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Home
           </Link>
         </main>
-      </>
+      </AppShell>
     );
   }
 
@@ -68,17 +73,19 @@ export default async function ProfilePage({
   // Private profile: show nothing but the notice (unless it's your own).
   if (!profile.isPublic && !isOwn) {
     return (
-      <>
-        {isGuest && <GuestBanner />}
-        <Nav isGuest={isGuest} username={viewerUsername} />
+      <AppShell isGuest={isGuest} username={viewerUsername}>
         <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-16 text-center">
-          <div className="text-4xl">🔒</div>
-          <h1 className="mt-3 text-xl font-bold">This profile is private.</h1>
+          <span className="icon-chip mx-auto bg-muted text-muted-foreground">
+            <Lock className="h-5 w-5" />
+          </span>
+          <h1 className="mt-3 text-xl font-extrabold tracking-tight">
+            This profile is private.
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             @{profile.username} has chosen to keep their progress private.
           </p>
         </main>
-      </>
+      </AppShell>
     );
   }
 
@@ -90,40 +97,42 @@ export default async function ProfilePage({
   const profileUrl = `${SITE}/u/${profile.username}`;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} username={viewerUsername} />
-
+    <AppShell isGuest={isGuest} username={viewerUsername}>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         {/* Header */}
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <div
-            className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-bold text-white"
-            style={{ backgroundColor: `hsl(${hue} 65% 45%)` }}
-          >
-            {profile.username.slice(0, 2).toUpperCase()}
-          </div>
+        <div className="fade-rise gradient-purple shadow-soft-lg relative overflow-hidden rounded-2xl p-6 text-white sm:p-8">
+          <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            <div
+              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-extrabold text-white ring-4 ring-white/30"
+              style={{ backgroundColor: `hsl(${hue} 65% 45%)` }}
+            >
+              {profile.username.slice(0, 2).toUpperCase()}
+            </div>
 
-          <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-2xl font-bold tracking-tight">{profile.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              @{profile.username} · Class {profile.classLevel} · Member since{" "}
-              {memberSince}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-primary">
-              Level {profile.level} · {profile.levelTitle}
-            </p>
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-2xl font-extrabold tracking-tight">
+                {profile.name}
+              </h1>
+              <p className="text-sm font-medium text-white/80">
+                @{profile.username} · Class {profile.classLevel} · Member since{" "}
+                {memberSince}
+              </p>
+              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-bold text-white backdrop-blur">
+                Level {profile.level} · {profile.levelTitle}
+              </span>
 
-            <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
-              <CopyLinkButton url={profileUrl} />
-              {isOwn && (
-                <Link
-                  href="/settings"
-                  className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-sm font-medium hover:bg-muted"
-                >
-                  ⚙️ Settings
-                </Link>
-              )}
+              <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+                <CopyLinkButton url={profileUrl} />
+                {isOwn && (
+                  <Link
+                    href="/settings"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-white/20 px-3 text-sm font-bold text-white backdrop-blur hover:bg-white/30"
+                  >
+                    <SettingsIcon className="h-4 w-4" />
+                    Settings
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -134,7 +143,12 @@ export default async function ProfilePage({
           <Stat label="Accuracy" value={`${profile.accuracy}%`} />
           <Stat
             label="Streak"
-            value={`🔥 ${profile.streakCurrent}`}
+            value={
+              <span className="inline-flex items-center gap-1">
+                <Flame className="h-4 w-4 text-warn" />
+                {profile.streakCurrent}
+              </span>
+            }
             sub={`Best ${profile.streakLongest}`}
           />
           <Stat
@@ -146,14 +160,14 @@ export default async function ProfilePage({
         {/* Card showcase */}
         {profile.showcase.length > 0 && (
           <section className="mt-8">
-            <h2 className="mb-3 text-lg font-bold tracking-tight">
+            <h2 className="mb-3 text-lg font-extrabold tracking-tight">
               Recent Cards
             </h2>
             <div className="flex flex-wrap gap-2">
               {profile.showcase.map((c) => (
                 <span
                   key={c.reactionId}
-                  className="rounded-lg border-2 bg-card px-3 py-1.5 text-sm font-semibold shadow-sm"
+                  className="rounded-xl border-2 bg-card px-3 py-1.5 text-sm font-bold shadow-soft"
                   style={{ borderColor: reactionColorVar(c.typeColor) }}
                 >
                   {c.name}
@@ -165,26 +179,26 @@ export default async function ProfilePage({
 
         {/* Badges */}
         <section className="mt-8">
-          <h2 className="mb-3 text-lg font-bold tracking-tight">Badges</h2>
+          <h2 className="mb-3 text-lg font-extrabold tracking-tight">Badges</h2>
           <BadgeGrid badges={profile.badges} isGuest={false} />
         </section>
 
         {/* Guest CTA */}
         {isGuest && (
-          <div className="mt-10 rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-            <p className="text-sm font-semibold">
+          <div className="gradient-brand shadow-soft-lg mt-10 rounded-2xl p-6 text-center text-white">
+            <p className="text-base font-extrabold">
               Create your own profile free at Level Up Chemistry.
             </p>
             <Link
               href="/signup"
-              className="mt-3 inline-flex h-10 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+              className="btn-chunky mt-3 inline-flex h-11 items-center justify-center rounded-2xl border-(--primary-border) bg-primary px-5 text-sm font-extrabold tracking-wide text-primary-foreground"
             >
               Sign up free
             </Link>
           </div>
         )}
       </main>
-    </>
+    </AppShell>
   );
 }
 
@@ -194,15 +208,15 @@ function Stat({
   sub,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   sub?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-3 text-center shadow-sm">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+    <div className="card-soft p-3 text-center">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-lg font-bold">{value}</p>
+      <p className="mt-1 text-lg font-extrabold">{value}</p>
       {sub && <p className="text-[10px] text-muted-foreground">{sub}</p>}
     </div>
   );

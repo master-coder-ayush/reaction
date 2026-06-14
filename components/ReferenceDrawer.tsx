@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen, X } from "lucide-react";
 import { ReferenceList } from "@/components/ReferenceList";
 import type { ReferenceSection } from "@/lib/reference";
 
@@ -45,9 +46,9 @@ export function ReferenceDrawer({ chapterId }: { chapterId: number }) {
         onClick={() => setOpen(true)}
         aria-label="Open reagent reference"
         title="Reagent reference"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-info-soft text-info-border transition-colors hover:brightness-95"
       >
-        📖
+        <BookOpen className="h-4 w-4" aria-hidden />
       </button>
 
       <AnimatePresence>
@@ -68,14 +69,19 @@ export function ReferenceDrawer({ chapterId }: { chapterId: number }) {
               transition={{ type: "spring", stiffness: 320, damping: 34 }}
             >
               <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <h2 className="text-base font-bold">📚 Reagent Reference</h2>
+                <h2 className="flex items-center gap-2 text-base font-extrabold">
+                  <span className="icon-chip h-8 w-8 bg-info-soft text-info-border" aria-hidden>
+                    <BookOpen className="h-4 w-4" />
+                  </span>
+                  Reagent Reference
+                </h2>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Close reference"
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
-                  Close ✕
+                  <X className="h-4 w-4" aria-hidden />
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-4">

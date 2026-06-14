@@ -1,6 +1,6 @@
+import { Award } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { BadgeGrid } from "@/components/BadgeGrid";
 import { loadBadgesWithState } from "@/lib/badges";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
@@ -22,22 +22,24 @@ export default async function BadgesPage() {
     : badges.filter((b) => b.earnedAt != null).length;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-        <div className="mb-5">
-          <h1 className="text-2xl font-bold tracking-tight">🏅 Badges</h1>
-          <p className="text-sm text-muted-foreground">
-            {isGuest
-              ? "Sign up to start earning badges as you practise."
-              : `${earnedCount} of ${badges.length} badges earned.`}
-          </p>
+        <div className="fade-rise mb-5 flex items-center gap-3">
+          <span className="icon-chip bg-accent-soft text-accent-border">
+            <Award className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">Badges</h1>
+            <p className="text-sm text-muted-foreground">
+              {isGuest
+                ? "Sign up to start earning badges as you practise."
+                : `${earnedCount} of ${badges.length} badges earned.`}
+            </p>
+          </div>
         </div>
 
         <BadgeGrid badges={badges} isGuest={isGuest} />
       </main>
-    </>
+    </AppShell>
   );
 }

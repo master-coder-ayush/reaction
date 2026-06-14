@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Lock, Swords, ArrowRight } from "lucide-react";
 import { CHAPTERS, type Chapter } from "@/lib/constants";
 
 export type ChapterProgress = {
@@ -32,16 +33,16 @@ export function ChapterMap({ progress = {}, unlocked, isGuest }: Props) {
 
   return (
     <div>
-      <div className="mb-4 inline-flex rounded-lg border border-border bg-card p-1">
+      <div className="mb-4 inline-flex rounded-xl border border-border bg-muted p-1">
         {(["11", "12"] as const).map((level) => (
           <button
             key={level}
             type="button"
             onClick={() => setTab(level)}
             className={
-              "rounded-md px-4 py-1.5 text-sm font-medium transition-colors " +
+              "rounded-lg px-4 py-1.5 text-sm font-bold transition-colors " +
               (tab === level
-                ? "bg-primary text-primary-foreground"
+                ? "bg-secondary text-secondary-foreground shadow-soft"
                 : "text-muted-foreground hover:text-foreground")
             }
           >
@@ -90,26 +91,30 @@ function ChapterCard({
   return (
     <div
       className={
-        "h-full rounded-2xl border bg-card p-5 shadow-sm transition-colors " +
+        "card-soft h-full transition-all " +
         (locked
-          ? "border-border opacity-70"
-          : "border-border hover:border-primary")
+          ? "opacity-70"
+          : "hover:-translate-y-0.5 hover:shadow-soft-lg")
       }
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="text-base font-semibold">
+        <span className="text-base font-extrabold tracking-tight">
           {chapter.id}. {chapter.name}
         </span>
-        {locked && <span aria-label="Locked">🔒</span>}
+        {locked && (
+          <span className="text-muted-foreground" aria-label="Locked">
+            <Lock className="h-4 w-4" />
+          </span>
+        )}
       </div>
 
       <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className="h-full rounded-full bg-primary"
+          className="h-full rounded-full bg-secondary"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-2 text-xs font-semibold text-muted-foreground">
         {total > 0
           ? `${mastered} / ${total} reactions mastered`
           : "No reactions yet"}
@@ -121,24 +126,24 @@ function ChapterCard({
           unlock this chapter.
         </p>
       ) : (
-        <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-medium">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-bold">
           <Link
             href={`/learn/${chapter.id}`}
-            className="text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-secondary-border hover:underline"
           >
-            Open chapter →
+            Open chapter <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
           <Link
             href={`/practice/${chapter.id}/module-1`}
-            className="text-primary hover:underline"
+            className="inline-flex items-center gap-1 text-primary-border hover:underline"
           >
-            Practice →
+            Practice <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
           <Link
             href={`/boss/${chapter.id}`}
-            className="text-orange-600 hover:underline dark:text-orange-400"
+            className="inline-flex items-center gap-1 text-destructive-border hover:underline"
           >
-            ⚔️ Boss Level
+            <Swords className="h-3.5 w-3.5" aria-hidden /> Boss Level
           </Link>
         </div>
       )}

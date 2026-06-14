@@ -1,5 +1,7 @@
 "use client";
 
+import { GraduationCap, BookOpen } from "lucide-react";
+
 // Hint + story/why panel (Sprint 3 §3.4). Styled as a "chemistry teacher's
 // note" card that slides in (see `hint-slide` in globals.css). Hints never cost
 // XP — they appear automatically after an answer.
@@ -26,14 +28,14 @@ export function HintPanel({ hint, story, why, wasCorrect }: Props) {
   return (
     <div className="hint-slide mt-4 space-y-3">
       {showHint && (
-        <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900 shadow-sm dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-100">
-          <div className="mb-1 flex items-center gap-1.5 font-semibold">
-            <span aria-hidden>👩‍🔬</span> Teacher&apos;s note
+        <div className="rounded-2xl border border-warning-soft bg-warning-soft p-4 text-sm text-warn-border shadow-soft">
+          <div className="mb-1 flex items-center gap-1.5 font-bold">
+            <GraduationCap className="h-4 w-4" aria-hidden /> Teacher&apos;s note
           </div>
           <p>{hint}</p>
           {showWhy && (
-            <p className="mt-2 border-t border-amber-300/40 pt-2 text-amber-800 dark:text-amber-200">
-              <span className="font-semibold">Why: </span>
+            <p className="mt-2 border-t border-warn/20 pt-2 text-warn-border/90">
+              <span className="font-bold">Why: </span>
               {why}
             </p>
           )}
@@ -41,9 +43,9 @@ export function HintPanel({ hint, story, why, wasCorrect }: Props) {
       )}
 
       {story && (
-        <div className="rounded-xl border border-border bg-muted p-4 text-sm">
-          <div className="mb-1 flex items-center gap-1.5 font-semibold text-muted-foreground">
-            <span aria-hidden>📖</span> The story
+        <div className="rounded-2xl border border-border bg-muted p-4 text-sm">
+          <div className="mb-1 flex items-center gap-1.5 font-bold text-muted-foreground">
+            <BookOpen className="h-4 w-4" aria-hidden /> The story
           </div>
           <p>{story}</p>
         </div>

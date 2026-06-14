@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { Layers } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { CardGrid } from "@/components/CardGrid";
 import { PathwayChain } from "@/components/PathwayChain";
 import { loadReactionCards } from "@/lib/cards";
@@ -26,12 +26,16 @@ export default async function CardsPage() {
   const xp = userId != null ? (await loadLoggedInDashboard(userId)).xp : 0;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
-        <h1 className="text-2xl font-bold tracking-tight">Reaction Cards</h1>
+        <div className="fade-rise mb-6 flex items-center gap-3">
+          <span className="icon-chip bg-pink-soft text-pink-border">
+            <Layers className="h-5 w-5" />
+          </span>
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            Reaction Cards
+          </h1>
+        </div>
 
         <CardGrid cards={cards} isGuest={isGuest} />
 
@@ -86,6 +90,6 @@ export default async function CardsPage() {
           </>
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

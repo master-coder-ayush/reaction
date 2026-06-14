@@ -1,5 +1,7 @@
 "use client";
 
+import { DoorOpen, Unlock, Lock } from "lucide-react";
+
 // Escape Room door map (Sprint 5 §5.4). Shows the 5 doors horizontally. The
 // current door is highlighted; cleared doors show open, future doors padlocked.
 
@@ -25,19 +27,25 @@ export function EscapeRoomDoorMap({
             className={
               "flex flex-1 flex-col items-center gap-1 rounded-xl border-2 p-2 text-center transition-colors " +
               (state === "open"
-                ? "border-success bg-success/10"
+                ? "border-primary bg-primary-soft text-primary-border"
                 : state === "current"
-                  ? "border-primary bg-primary/10"
-                  : "border-border bg-muted/40 opacity-70")
+                  ? "border-accent bg-accent-soft text-accent-border"
+                  : "border-border bg-muted/40 text-muted-foreground opacity-70")
             }
           >
-            <span className="text-2xl" aria-hidden>
-              {state === "open" ? "🚪" : state === "current" ? "🔓" : "🔒"}
+            <span aria-hidden>
+              {state === "open" ? (
+                <DoorOpen className="h-6 w-6" />
+              ) : state === "current" ? (
+                <Unlock className="h-6 w-6" />
+              ) : (
+                <Lock className="h-6 w-6" />
+              )}
             </span>
-            <span className="text-[10px] font-medium leading-tight text-muted-foreground">
+            <span className="text-[10px] font-bold leading-tight text-muted-foreground">
               Door {i + 1}
             </span>
-            <span className="line-clamp-1 text-[10px] leading-tight">{name}</span>
+            <span className="line-clamp-1 text-[10px] font-semibold leading-tight">{name}</span>
           </div>
         );
       })}

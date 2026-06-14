@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Zap } from "lucide-react";
 import { PathwayChain } from "@/components/PathwayChain";
+import { Button } from "@/components/ui/button";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
 import { awardGuestXp } from "@/lib/guest";
@@ -141,12 +143,12 @@ export function PathwaySession({
   if (phase === "complete") {
     return (
       <motion.div
-        className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
+        className="card-soft p-6 text-center"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="text-4xl">🧭</div>
-        <h2 className="mt-2 text-lg font-bold tracking-tight">
+        <h2 className="mt-2 text-lg font-extrabold tracking-tight">
           Pathway complete!
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -157,9 +159,9 @@ export function PathwaySession({
           <PathwayChain steps={steps} />
         </div>
 
-        <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-          +{xpEarned} XP{" "}
-          <span className="text-xs font-normal text-muted-foreground">
+        <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-1.5 text-sm font-bold text-primary-border">
+          <Zap className="h-4 w-4" aria-hidden /> +{xpEarned} XP{" "}
+          <span className="text-xs font-medium text-muted-foreground">
             (incl. +{PATHWAY_COMPLETE_XP} bonus)
           </span>
         </p>
@@ -173,13 +175,9 @@ export function PathwaySession({
           <p className="mt-3 text-xs text-muted-foreground">Saving…</p>
         )}
 
-        <button
-          type="button"
-          onClick={onExit}
-          className="mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground hover:opacity-90"
-        >
+        <Button type="button" onClick={onExit} className="mt-6">
           Choose another pathway
-        </button>
+        </Button>
       </motion.div>
     );
   }
@@ -188,26 +186,28 @@ export function PathwaySession({
   const fromCompound = steps[currentStep].compoundName;
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+    <div className="card-soft p-6">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>
+        <span className="font-semibold">
           Step {currentStep + 1} of {steps.length - 1}
         </span>
-        <span className="font-medium text-primary">+{PATHWAY_STEP_XP} XP</span>
+        <span className="inline-flex items-center gap-1 font-bold text-primary">
+          <Zap className="h-3.5 w-3.5" aria-hidden /> +{PATHWAY_STEP_XP} XP
+        </span>
       </div>
 
       <p className="mt-1 text-sm text-muted-foreground">
         Goal: convert{" "}
-        <span className="font-semibold text-foreground">
+        <span className="font-bold text-foreground">
           {pathway.startCompound}
         </span>{" "}
         →{" "}
-        <span className="font-semibold text-foreground">
+        <span className="font-bold text-foreground">
           {pathway.endCompound}
         </span>
       </p>
 
-      <h2 className="mt-4 text-lg font-bold tracking-tight">
+      <h2 className="mt-4 text-lg font-extrabold tracking-tight">
         What is <span className="text-primary">{fromCompound}</span> converted to
         {target?.reagentUsed ? (
           <>
@@ -239,10 +239,10 @@ export function PathwaySession({
               onClick={() => handlePick(opt)}
               animate={isWrong ? { x: [0, -8, 8, -6, 6, 0] } : { x: 0 }}
               transition={{ duration: 0.4 }}
-              className={`flex h-12 items-center rounded-xl border px-4 text-left text-sm font-medium transition-colors ${
+              className={`flex h-12 items-center rounded-2xl border-2 px-4 text-left text-sm font-semibold transition-all ${
                 isWrong
-                  ? "border-red-400 bg-red-50 text-red-700 dark:bg-red-950/30"
-                  : "border-border bg-background hover:border-primary hover:bg-primary/5"
+                  ? "border-destructive bg-destructive-soft text-destructive-border"
+                  : "border-border bg-card hover:-translate-y-px hover:border-primary hover:bg-primary-soft/40"
               }`}
             >
               {opt}
@@ -253,7 +253,7 @@ export function PathwaySession({
 
       {/* Live chain built so far. */}
       <div className="mt-6 overflow-x-auto border-t border-border pt-4">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
+        <p className="mb-2 text-xs font-bold text-muted-foreground">
           Your pathway
         </p>
         <AnimatePresence>

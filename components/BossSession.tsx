@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { AnswerOption, type AnswerState } from "@/components/AnswerOption";
 import { BossTimer } from "@/components/BossTimer";
 import { BossResults } from "@/components/BossResults";
+import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
@@ -178,13 +180,13 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
     <div>
       {/* Progress + timer, visible at all times (Sprint 5 §5.1). */}
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-semibold tabular-nums">
+        <span className="text-sm font-extrabold tabular-nums">
           Question {current + 1} / {total}
         </span>
         <BossTimer seconds={BOSS_TIME_SECONDS} onExpire={finish} />
       </div>
 
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${((current + 1) / total) * 100}%` }}
@@ -192,10 +194,10 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
       </div>
 
       {/* Question card — no hints, no confetti during the boss. */}
-      <div className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+      <div className="card-soft mt-4 p-5 sm:p-6">
         <div className="flex items-center justify-end text-xs">
           <span
-            className="rounded-full px-2 py-0.5 font-medium text-white"
+            className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"
             style={{ backgroundColor: accent }}
           >
             {question.reactionTypeName}
@@ -206,7 +208,7 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
           <p className="mt-3 text-sm text-muted-foreground">{question.questionText}</p>
         ) : (
           <>
-            <h2 className="mt-3 text-lg font-semibold">{question.name}</h2>
+            <h2 className="mt-3 text-lg font-extrabold tracking-tight">{question.name}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{question.questionText}</p>
           </>
         )}
@@ -214,7 +216,7 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
         {question.equationText && (
           <p
             className={
-              "mt-3 rounded-lg bg-muted px-3 py-2 text-center font-mono " +
+              "mt-3 rounded-xl border border-border bg-muted px-3 py-2 text-center font-mono " +
               (isNameMode ? "text-lg font-semibold" : "text-base")
             }
           >
@@ -222,7 +224,7 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
           </p>
         )}
 
-        <p className="mt-4 text-sm font-medium">
+        <p className="mt-4 text-sm font-bold">
           {TYPE_LABEL[questionType] ?? "Choose the correct option"}
         </p>
 
@@ -239,14 +241,20 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
           ))}
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={handleSubmitAnswer}
           disabled={selectedId == null}
-          className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-5 w-full"
         >
-          {current + 1 >= total ? "Finish Boss Level" : "Next →"}
-        </button>
+          {current + 1 >= total ? (
+            "Finish Boss Level"
+          ) : (
+            <>
+              Next <ArrowRight className="h-4 w-4" aria-hidden />
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );

@@ -57,10 +57,10 @@ export function BadgeGrid({
           <div
             key={b.id}
             className={
-              "flex flex-col items-center rounded-2xl border p-4 text-center transition-colors " +
+              "flex flex-col items-center rounded-2xl border p-4 text-center transition-all " +
               (earned
-                ? "border-border bg-card shadow-sm"
-                : "border-dashed border-border bg-muted/30")
+                ? "border-border bg-card shadow-soft hover:-translate-y-0.5 hover:shadow-soft-lg"
+                : "border-dashed border-border bg-muted/40")
             }
           >
             <div
@@ -83,7 +83,7 @@ export function BadgeGrid({
 
             <h3
               className={
-                "mt-3 text-sm font-semibold " +
+                "mt-3 text-sm font-extrabold tracking-tight " +
                 (earned ? "" : "text-muted-foreground")
               }
             >
@@ -91,7 +91,7 @@ export function BadgeGrid({
             </h3>
 
             {earned ? (
-              <p className="mt-1 text-xs text-success">
+              <p className="mt-1 text-xs font-bold text-primary">
                 Earned {fmtDate(b.earnedAt!)}
               </p>
             ) : (

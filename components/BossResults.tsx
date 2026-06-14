@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { CheckCircle2, Zap, Unlock, ArrowLeft, ArrowRight } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
 import { WeakAreaCards, type WeakArea } from "@/components/WeakAreaCards";
+import { Button } from "@/components/ui/button";
 import {
   BOSS_PASS_THRESHOLD,
   BOSS_QUESTION_COUNT,
@@ -44,25 +46,28 @@ export function BossResults({
   if (passed) {
     const perfect = score >= BOSS_QUESTION_COUNT;
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft relative overflow-hidden p-6 text-center">
         <Confetti />
-        <div className="text-4xl">✅</div>
-        <h2 className="mt-3 text-2xl font-bold">
+        <span className="icon-chip mx-auto bg-primary-soft text-primary-border" aria-hidden>
+          <CheckCircle2 className="h-6 w-6" />
+        </span>
+        <h2 className="mt-3 text-2xl font-extrabold tracking-tight">
           Boss Cleared! {score}/{BOSS_QUESTION_COUNT}
         </h2>
         {perfect && (
-          <p className="mt-1 text-sm font-semibold text-success">
+          <p className="mt-1 text-sm font-bold text-primary-border">
             💯 Perfect run!
           </p>
         )}
 
-        <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-success/15 px-4 py-1.5 text-sm font-bold text-success">
-          +200 XP
+        <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-1.5 text-sm font-bold text-primary-border">
+          <Zap className="h-4 w-4" aria-hidden /> +200 XP
         </div>
 
         {!isGuest && nextChapterName && (
-          <p className="mt-5 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
-            🔓 {nextChapterName} chapter is now unlocked!
+          <p className="mt-5 inline-flex items-center gap-2 rounded-xl bg-secondary-soft px-4 py-3 text-sm font-bold text-secondary-border">
+            <Unlock className="h-4 w-4" aria-hidden /> {nextChapterName} chapter is
+            now unlocked!
           </p>
         )}
         {isGuest && (
@@ -73,21 +78,21 @@ export function BossResults({
 
         <Link
           href="/learn"
-          className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
+          className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl border-(--primary-border) bg-primary px-4 text-sm font-extrabold tracking-wide text-primary-foreground btn-chunky"
         >
-          Back to Chapter Map →
+          Back to Chapter Map <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+    <div className="card-soft p-6 text-center">
       <div className="text-4xl">💪</div>
-      <h2 className="mt-3 text-xl font-bold">Not quite! You need {BOSS_PASS_THRESHOLD}/{BOSS_QUESTION_COUNT}.</h2>
+      <h2 className="mt-3 text-xl font-extrabold tracking-tight">Not quite! You need {BOSS_PASS_THRESHOLD}/{BOSS_QUESTION_COUNT}.</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         You scored{" "}
-        <span className="font-semibold text-foreground">
+        <span className="font-bold text-foreground">
           {score}/{BOSS_QUESTION_COUNT}
         </span>
         .
@@ -97,23 +102,19 @@ export function BossResults({
 
       <div className="mt-6">
         {canRetry ? (
-          <button
-            type="button"
-            onClick={onTryAgain}
-            className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
-          >
+          <Button type="button" onClick={onTryAgain} className="w-full">
             Try Again
-          </button>
+          </Button>
         ) : (
-          <div className="rounded-xl bg-muted px-4 py-3 text-sm font-medium text-muted-foreground">
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm font-bold text-muted-foreground">
             Daily attempt limit reached. Come back tomorrow.
           </div>
         )}
         <Link
           href="/learn"
-          className="mt-3 inline-block text-sm text-muted-foreground hover:text-foreground"
+          className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground hover:text-foreground"
         >
-          ← Back to Chapter Map
+          <ArrowLeft className="h-4 w-4" aria-hidden /> Back to Chapter Map
         </Link>
       </div>
     </div>

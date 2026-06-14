@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { EscapeRoomSession } from "@/components/EscapeRoomSession";
 import { EscapeRoomDoorMap } from "@/components/EscapeRoomDoorMap";
+import { Button } from "@/components/ui/button";
 import { ESCAPE_CLUE_COST, type EscapeDoor } from "@/lib/escape";
 
 // Escape Room entry (Sprint 5 §5.4): the lab intro, class selector, and door
@@ -31,25 +33,25 @@ export function EscapeRoomEntry({ doorsByClass, isGuest }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+    <div className="card-soft p-6 text-center">
       <div className="text-4xl">🧪🔒</div>
-      <h1 className="mt-3 text-2xl font-bold tracking-tight">Escape Room</h1>
+      <h1 className="mt-3 text-2xl font-extrabold tracking-tight">Escape Room</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         You are locked in the Organic Chemistry Lab. Solve reactions to unlock
         each door and escape.
       </p>
 
       {/* Class selector */}
-      <div className="mt-5 inline-flex rounded-lg border border-border bg-background p-1">
+      <div className="mt-5 inline-flex rounded-xl border border-border bg-muted p-1">
         {(["11", "12"] as const).map((c) => (
           <button
             key={c}
             type="button"
             onClick={() => setClassLevel(c)}
             className={
-              "rounded-md px-4 py-1.5 text-sm font-medium transition-colors " +
+              "rounded-lg px-4 py-1.5 text-sm font-bold transition-colors " +
               (classLevel === c
-                ? "bg-primary text-primary-foreground"
+                ? "bg-accent text-accent-foreground shadow-soft"
                 : "text-muted-foreground hover:text-foreground")
             }
           >
@@ -81,13 +83,15 @@ export function EscapeRoomEntry({ doorsByClass, isGuest }: Props) {
           No reactions are available for Class {classLevel} yet.
         </p>
       ) : (
-        <button
+        <Button
           type="button"
+          variant="accent"
+          size="lg"
           onClick={() => setStarted(true)}
-          className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
+          className="mt-6 w-full"
         >
-          Enter the Lab →
-        </button>
+          Enter the Lab <ArrowRight className="h-4 w-4" aria-hidden />
+        </Button>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
+import { Map } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { ChapterMap } from "@/components/ChapterMap";
 import { loadChapterProgress, loadLoggedInDashboard } from "@/lib/dashboard";
 
@@ -16,17 +16,23 @@ export default async function LearnPage() {
   const xp = userId != null ? (await loadLoggedInDashboard(userId)).xp : 0;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
-        <h1 className="text-2xl font-bold tracking-tight">Chapter Map</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {isGuest
-            ? "Every chapter is open — practice anything you like."
-            : "Clear each chapter's boss to unlock the next."}
-        </p>
+        <div className="fade-rise flex items-center gap-3">
+          <span className="icon-chip bg-secondary-soft text-secondary-border">
+            <Map className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              Chapter Map
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {isGuest
+                ? "Every chapter is open — practice anything you like."
+                : "Clear each chapter's boss to unlock the next."}
+            </p>
+          </div>
+        </div>
 
         <div className="mt-6">
           <ChapterMap
@@ -36,6 +42,6 @@ export default async function LearnPage() {
           />
         </div>
       </main>
-    </>
+    </AppShell>
   );
 }

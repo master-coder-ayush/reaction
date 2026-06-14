@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { AnswerOption, type AnswerState } from "@/components/AnswerOption";
 import { HintPanel } from "@/components/HintPanel";
 import { Confetti } from "@/components/Confetti";
 import { XPAnimation } from "@/components/XPAnimation";
 import { ReferenceDrawer } from "@/components/ReferenceDrawer";
+import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
 import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 
@@ -123,7 +125,7 @@ export function QuestionCard({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+    <div className="card-soft relative overflow-hidden p-5 sm:p-6">
       {submitted && wasCorrect && (
         <>
           <Confetti />
@@ -132,12 +134,12 @@ export function QuestionCard({
       )}
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span className="tabular-nums">
+        <span className="font-semibold tabular-nums">
           Question {index} of {total}
         </span>
         <div className="flex items-center gap-2">
           <span
-            className="rounded-full px-2 py-0.5 font-medium text-white"
+            className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"
             style={{ backgroundColor: accent }}
           >
             {reaction.reactionTypeName}
@@ -154,7 +156,7 @@ export function QuestionCard({
         </p>
       ) : (
         <>
-          <h2 className="mt-3 text-lg font-semibold">{reaction.name}</h2>
+          <h2 className="mt-3 text-lg font-extrabold tracking-tight">{reaction.name}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {reaction.questionText}
           </p>
@@ -164,7 +166,7 @@ export function QuestionCard({
       {reaction.equationText && (
         <p
           className={
-            "mt-3 rounded-lg bg-muted px-3 py-2 text-center font-mono " +
+            "mt-3 rounded-xl border border-border bg-muted px-3 py-2 text-center font-mono " +
             (isNameMode ? "text-lg font-semibold" : "text-base")
           }
         >
@@ -172,7 +174,7 @@ export function QuestionCard({
         </p>
       )}
 
-      <p className="mt-4 text-sm font-medium">
+      <p className="mt-4 text-sm font-bold">
         {TYPE_LABEL[questionType] ?? "Choose the correct option"}
       </p>
 
@@ -190,25 +192,33 @@ export function QuestionCard({
       </div>
 
       {!submitted ? (
-        <button
+        <Button
           type="button"
           onClick={handleSubmit}
           disabled={selectedId == null}
-          className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-5 w-full"
         >
           Submit
-        </button>
+        </Button>
       ) : (
         <>
           <div
             className={
-              "mt-4 rounded-lg px-3 py-2 text-sm font-semibold " +
+              "mt-4 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold " +
               (wasCorrect
-                ? "bg-success/15 text-success"
-                : "bg-destructive/10 text-destructive")
+                ? "bg-primary-soft text-primary-border"
+                : "bg-destructive-soft text-destructive-border")
             }
           >
-            {wasCorrect ? "✓ Correct! +" + xp + " XP" : "✗ Not quite."}
+            {wasCorrect ? (
+              <>
+                <CheckCircle2 className="h-4 w-4" aria-hidden /> Correct! +{xp} XP
+              </>
+            ) : (
+              <>
+                <XCircle className="h-4 w-4" aria-hidden /> Not quite.
+              </>
+            )}
           </div>
 
           <HintPanel
@@ -218,13 +228,10 @@ export function QuestionCard({
             wasCorrect={wasCorrect}
           />
 
-          <button
-            type="button"
-            onClick={onNext}
-            className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
-          >
-            {wasCorrect ? "Next →" : "Try Next →"}
-          </button>
+          <Button type="button" onClick={onNext} className="mt-5 w-full">
+            {wasCorrect ? "Next" : "Try Next"}
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Button>
         </>
       )}
     </div>

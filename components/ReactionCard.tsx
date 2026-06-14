@@ -38,9 +38,9 @@ export function ReactionCard({
   // cards, as collection progress.
   if (!card.unlocked && !isGuest) {
     return (
-      <div className="flex aspect-3/4 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/40 p-4 text-center">
-        <span className="text-3xl text-muted-foreground/50">?</span>
-        <p className="mt-2 text-xs font-medium text-muted-foreground/70">
+      <div className="flex aspect-3/4 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/50 p-4 text-center">
+        <span className="text-3xl font-extrabold text-muted-foreground/50">?</span>
+        <p className="mt-2 text-xs font-bold text-muted-foreground/70">
           {card.chapterName}
         </p>
         <p className="mt-1 text-[10px] text-muted-foreground/50">
@@ -60,7 +60,7 @@ export function ReactionCard({
       style={{ transformStyle: "preserve-3d" }}
     >
       <div
-        className="flex h-full flex-col rounded-2xl border-2 bg-card p-4 shadow-sm"
+        className="flex h-full flex-col rounded-2xl border-2 bg-card p-4 shadow-soft"
         style={{ borderColor: color, backfaceVisibility: "hidden" }}
       >
         <div className="flex items-center justify-between">
@@ -76,10 +76,10 @@ export function ReactionCard({
           <span className="text-xs">{stars(card.difficulty)}</span>
         </div>
 
-        <h3 className="mt-2 text-sm font-bold leading-tight">{card.name}</h3>
+        <h3 className="mt-2 text-sm font-extrabold leading-tight">{card.name}</h3>
 
         {(card.reactant || card.product) && (
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-2 font-mono text-xs text-muted-foreground">
             {card.reactant ?? "?"}{" "}
             {card.reagent ? `—[${card.reagent}]→` : "→"} {card.product ?? "?"}
           </p>
@@ -87,7 +87,7 @@ export function ReactionCard({
 
         <div className="mt-auto pt-3">
           {isGuest ? (
-            <p className="text-[10px] font-semibold text-primary">
+            <p className="text-[10px] font-bold text-pink-border">
               Sign up to keep this card
             </p>
           ) : (

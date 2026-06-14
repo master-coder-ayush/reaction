@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { BadgeCheck, Star } from "lucide-react";
 import { PathwaySession } from "@/components/PathwaySession";
 import { PathwayChain } from "@/components/PathwayChain";
 import type { PathwayDTO } from "@/lib/pathway";
@@ -53,9 +54,9 @@ export function PathwayList({
 
   if (pathways.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft p-6 text-center">
         <div className="text-3xl">🧭</div>
-        <h2 className="mt-2 text-lg font-semibold">No pathways yet</h2>
+        <h2 className="mt-2 text-lg font-extrabold tracking-tight">No pathways yet</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           This chapter doesn&apos;t have any pathway challenges yet. Check back
           soon!
@@ -74,11 +75,11 @@ export function PathwayList({
             key={p.id}
             type="button"
             onClick={() => setActive(p)}
-            className="rounded-2xl border border-border bg-card p-5 text-left shadow-sm transition-colors hover:border-primary"
+            className="card-soft p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-soft-lg"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-base font-bold tracking-tight">
+                <h3 className="text-base font-extrabold tracking-tight">
                   Convert {p.startCompound} → {p.endCompound}
                 </h3>
                 {p.description && (
@@ -88,14 +89,18 @@ export function PathwayList({
                 )}
               </div>
               {done && (
-                <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                  ✓ Card earned
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary-soft px-2 py-0.5 text-xs font-bold text-primary-border">
+                  <BadgeCheck className="h-3.5 w-3.5" aria-hidden /> Card earned
                 </span>
               )}
             </div>
 
-            <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="text-amber-500" aria-label="difficulty">
+            <div className="mt-3 flex items-center gap-4 text-xs font-semibold text-muted-foreground">
+              <span
+                className="inline-flex items-center gap-0.5 text-warning"
+                aria-label="difficulty"
+              >
+                <Star className="h-3.5 w-3.5 fill-current" aria-hidden />
                 {stars(stepCount)}
               </span>
               <span>
@@ -103,7 +108,7 @@ export function PathwayList({
               </span>
             </div>
 
-            <div className="mt-3 overflow-x-auto opacity-70">
+            <div className="mt-3 overflow-x-auto opacity-80">
               <PathwayChain steps={p.steps} revealed={1} compact />
             </div>
           </button>

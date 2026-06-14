@@ -42,10 +42,10 @@ export function DraggableLabel({
       {...listeners}
       {...attributes}
       className={
-        "cursor-grab rounded-full border-2 bg-card px-3 py-1.5 text-sm font-medium shadow-sm transition-colors active:cursor-grabbing " +
+        "cursor-grab rounded-full border-2 bg-card px-3 py-1.5 text-sm font-bold shadow-soft transition-colors active:cursor-grabbing " +
         (selected
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-border hover:border-primary/60")
+          ? "border-secondary bg-secondary-soft text-secondary-border"
+          : "border-border hover:border-secondary/60 hover:bg-secondary-soft/40")
       }
     >
       {text}

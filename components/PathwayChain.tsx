@@ -57,7 +57,7 @@ export function PathwayChain({
             </motion.span>
           )}
           <motion.span
-            className={`rounded-lg border bg-card font-semibold shadow-sm ${
+            className={`rounded-xl border-2 bg-card font-bold shadow-soft ${
               compact ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"
             }`}
             style={{

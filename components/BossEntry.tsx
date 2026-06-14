@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Swords, Medal, Star, Layers, ArrowLeft } from "lucide-react";
 import { BossSession } from "@/components/BossSession";
+import { Button } from "@/components/ui/button";
 import {
   BOSS_DAILY_ATTEMPT_LIMIT,
   BOSS_PASS_THRESHOLD,
@@ -43,24 +45,35 @@ export function BossEntry({
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+    <div className="card-soft p-6 text-center">
+      <span className="icon-chip mx-auto bg-destructive-soft text-destructive-border" aria-hidden>
+        <Swords className="h-6 w-6" />
+      </span>
+      <p className="mt-3 text-xs font-extrabold uppercase tracking-widest text-destructive-border">
         Boss Level
       </p>
-      <h1 className="mt-1 text-2xl font-bold tracking-tight">{chapterName}</h1>
+      <h1 className="mt-1 text-2xl font-extrabold tracking-tight">{chapterName}</h1>
 
-      <p className="mt-4 rounded-xl bg-muted px-4 py-3 text-sm font-medium">
+      <p className="mt-4 rounded-xl bg-muted px-4 py-3 text-sm font-bold">
         {BOSS_QUESTION_COUNT} questions · 10 minutes · Need {BOSS_PASS_THRESHOLD}/
         {BOSS_QUESTION_COUNT} to clear
       </p>
 
       {/* Reward preview */}
       <div className="mt-4 text-left">
-        <h2 className="text-sm font-semibold">Clear it to earn</h2>
-        <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-          <li>🏅 {badgeName ?? "Boss badge"}</li>
-          <li>⭐ +200 XP</li>
-          <li>🎴 {chapterName} chapter card</li>
+        <h2 className="text-sm font-bold">Clear it to earn</h2>
+        <ul className="mt-2 space-y-1.5 text-sm font-semibold text-muted-foreground">
+          <li className="flex items-center gap-2">
+            <Medal className="h-4 w-4 text-warning" aria-hidden />
+            {badgeName ?? "Boss badge"}
+          </li>
+          <li className="flex items-center gap-2">
+            <Star className="h-4 w-4 text-warning" aria-hidden /> +200 XP
+          </li>
+          <li className="flex items-center gap-2">
+            <Layers className="h-4 w-4 text-accent" aria-hidden /> {chapterName}{" "}
+            chapter card
+          </li>
         </ul>
       </div>
 
@@ -69,18 +82,20 @@ export function BossEntry({
           This chapter doesn&apos;t have enough questions for a boss level yet.
         </p>
       ) : limitReached ? (
-        <p className="mt-6 rounded-xl bg-muted px-4 py-3 text-sm font-medium text-muted-foreground">
+        <p className="mt-6 rounded-xl bg-muted px-4 py-3 text-sm font-bold text-muted-foreground">
           Daily attempt limit reached. Come back tomorrow.
         </p>
       ) : (
         <>
-          <button
+          <Button
             type="button"
+            variant="destructive"
+            size="lg"
             onClick={() => setStarted(true)}
-            className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
+            className="mt-6 w-full"
           >
             Start Boss Level
-          </button>
+          </Button>
           {!isGuest && (
             <p className="mt-2 text-xs text-muted-foreground">
               {BOSS_DAILY_ATTEMPT_LIMIT - attemptsUsed} of{" "}
@@ -92,9 +107,9 @@ export function BossEntry({
 
       <Link
         href="/learn"
-        className="mt-4 inline-block text-sm text-muted-foreground hover:text-foreground"
+        className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground hover:text-foreground"
       >
-        ← Back to Chapter Map
+        <ArrowLeft className="h-4 w-4" aria-hidden /> Back to Chapter Map
       </Link>
     </div>
   );

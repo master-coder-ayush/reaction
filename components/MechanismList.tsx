@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MechanismSession } from "@/components/MechanismSession";
+import { Button } from "@/components/ui/button";
 import type { MechanismDTO } from "@/lib/mechanism";
 
 // MechanismList (Sprint 7 §7.1). Walks the chapter's mechanisms one at a time:
@@ -19,9 +20,9 @@ export function MechanismList({
 
   if (mechanisms.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft p-6 text-center">
         <div className="text-3xl">🧩</div>
-        <h2 className="mt-2 text-lg font-semibold">No mechanisms yet</h2>
+        <h2 className="mt-2 text-lg font-extrabold tracking-tight">No mechanisms yet</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           This chapter doesn&apos;t have drag-and-drop mechanisms yet.
         </p>
@@ -31,23 +32,23 @@ export function MechanismList({
 
   if (done) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft p-6 text-center">
         <div className="text-4xl">🎯</div>
-        <h2 className="mt-2 text-lg font-bold">Mechanisms complete!</h2>
+        <h2 className="mt-2 text-lg font-extrabold tracking-tight">Mechanisms complete!</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           You worked through all {mechanisms.length} mechanism
           {mechanisms.length === 1 ? "" : "s"} in this chapter.
         </p>
-        <button
+        <Button
           type="button"
           onClick={() => {
             setIndex(0);
             setDone(false);
           }}
-          className="mt-5 inline-flex h-11 items-center justify-center rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          className="mt-5"
         >
           Practice again
-        </button>
+        </Button>
       </div>
     );
   }
@@ -56,7 +57,7 @@ export function MechanismList({
 
   return (
     <div>
-      <p className="mb-3 text-xs text-muted-foreground">
+      <p className="mb-3 text-xs font-semibold text-muted-foreground">
         Mechanism {index + 1} of {mechanisms.length}
       </p>
       <MechanismSession

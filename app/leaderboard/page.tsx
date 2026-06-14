@@ -1,6 +1,6 @@
+import { Trophy } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import {
   loadEscapeLeaderboard,
@@ -26,16 +26,20 @@ export default async function LeaderboardPage() {
   const xp = userId != null ? (await loadLoggedInDashboard(userId)).xp : 0;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-        <div className="mb-5">
-          <h1 className="text-2xl font-bold tracking-tight">🏆 Leaderboard</h1>
-          <p className="text-sm text-muted-foreground">
-            See how you stack up against other students.
-          </p>
+        <div className="fade-rise mb-5 flex items-center gap-3">
+          <span className="icon-chip bg-warning-soft text-warn-border">
+            <Trophy className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              Leaderboard
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              See how you stack up against other students.
+            </p>
+          </div>
         </div>
 
         <LeaderboardTable
@@ -50,6 +54,6 @@ export default async function LeaderboardPage() {
           isGuest={isGuest}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

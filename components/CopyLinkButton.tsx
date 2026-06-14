@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Link2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // CopyLinkButton (Sprint 8 §8.1). Copies the public profile URL to the clipboard
 // and shows a brief "Copied!" confirmation.
@@ -19,12 +21,18 @@ export function CopyLinkButton({ url }: { url: string }) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={copy}
-      className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm font-medium hover:bg-muted"
-    >
-      {copied ? "✓ Copied!" : "🔗 Copy Profile Link"}
-    </button>
+    <Button type="button" onClick={copy} variant="outline" size="sm">
+      {copied ? (
+        <>
+          <Check className="h-4 w-4 text-primary" />
+          Copied!
+        </>
+      ) : (
+        <>
+          <Link2 className="h-4 w-4" />
+          Copy Profile Link
+        </>
+      )}
+    </Button>
   );
 }

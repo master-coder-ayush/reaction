@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Sparkles, X } from "lucide-react";
 import { reactionColorVar } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import type { AwardedBadge } from "@/lib/badges";
 
 // ---------------------------------------------------------------------------
@@ -42,48 +44,63 @@ export function BadgeRevealModal() {
           onClick={dismiss}
         >
           <motion.div
-            className="w-full max-w-sm rounded-3xl border border-border bg-card p-8 text-center shadow-2xl"
+            className="card-soft relative w-full max-w-sm overflow-hidden rounded-2xl p-0 text-center shadow-soft-lg"
             initial={{ scale: 0.7, y: 24, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Badge earned!
-            </p>
-
-            <motion.div
-              className="mx-auto mt-5 flex h-28 w-28 items-center justify-center rounded-full text-6xl shadow-inner"
-              style={{
-                backgroundColor: `color-mix(in srgb, ${reactionColorVar(
-                  current.color
-                )} 18%, transparent)`,
-                boxShadow: `0 0 0 4px color-mix(in srgb, ${reactionColorVar(
-                  current.color
-                )} 40%, transparent)`,
-              }}
-              initial={{ rotate: -12, scale: 0.5 }}
-              animate={{ rotate: [-12, 8, 0], scale: 1 }}
-              transition={{ delay: 0.15, duration: 0.6 }}
-            >
-              <span aria-hidden>{current.icon ?? "🏅"}</span>
-            </motion.div>
-
-            <h2 className="mt-6 text-xl font-bold tracking-tight">
-              {current.name}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {current.description}
-            </p>
-
             <button
               type="button"
               onClick={dismiss}
-              className="mt-7 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90"
+              aria-label="Close"
+              className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
             >
-              {queue.length > 1 ? "Next badge →" : "Awesome!"}
+              <X className="h-5 w-5" />
             </button>
+
+            <div className="gradient-purple px-8 pb-6 pt-7 text-white">
+              <p className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest">
+                <Sparkles className="h-4 w-4" aria-hidden />
+                Badge earned!
+              </p>
+            </div>
+
+            <div className="px-8 pb-8">
+              <motion.div
+                className="mx-auto -mt-12 flex h-28 w-28 items-center justify-center rounded-full bg-card text-6xl"
+                style={{
+                  backgroundColor: `color-mix(in srgb, ${reactionColorVar(
+                    current.color
+                  )} 18%, white)`,
+                  boxShadow: `0 0 0 4px color-mix(in srgb, ${reactionColorVar(
+                    current.color
+                  )} 40%, transparent)`,
+                }}
+                initial={{ rotate: -12, scale: 0.5 }}
+                animate={{ rotate: [-12, 8, 0], scale: 1 }}
+                transition={{ delay: 0.15, duration: 0.6 }}
+              >
+                <span aria-hidden>{current.icon ?? "🏅"}</span>
+              </motion.div>
+
+              <h2 className="mt-6 text-xl font-extrabold tracking-tight">
+                {current.name}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {current.description}
+              </p>
+
+              <Button
+                type="button"
+                onClick={dismiss}
+                variant="accent"
+                className="mt-7 w-full"
+              >
+                {queue.length > 1 ? "Next badge →" : "Awesome!"}
+              </Button>
+            </div>
           </motion.div>
         </motion.div>
       )}

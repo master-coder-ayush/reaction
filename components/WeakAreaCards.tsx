@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight, Target } from "lucide-react";
 
 // Weak-area quick-practice cards (Sprint 5 §5.1, Journey 11). On a boss fail we
 // surface up to 3 reactions the student got wrong, each with a shortcut into the
@@ -25,18 +26,25 @@ export function WeakAreaCards({
 
   return (
     <div className="mt-6 text-left">
-      <h3 className="text-sm font-semibold">Brush up on these</h3>
+      <h3 className="flex items-center gap-1.5 text-sm font-extrabold tracking-tight">
+        <Target className="h-4 w-4 text-warn" aria-hidden />
+        Brush up on these
+      </h3>
       <div className="mt-2 space-y-2.5">
         {areas.slice(0, 3).map((a) => (
           <Link
             key={a.reactionId}
             href={`/practice/${chapter}/module-${a.module}`}
-            className="block rounded-xl border border-border bg-card p-3 transition-colors hover:border-primary"
+            className="group block rounded-xl border border-border bg-card p-3 shadow-soft transition-all hover:-translate-y-0.5 hover:border-warn/50 hover:shadow-soft-lg"
           >
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-semibold">{a.name}</span>
-              <span className="shrink-0 text-xs font-medium text-primary">
-                Practice →
+              <span className="text-sm font-bold">{a.name}</span>
+              <span className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-warn-border">
+                Practice
+                <ArrowRight
+                  className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                  aria-hidden
+                />
               </span>
             </div>
             {a.why && (

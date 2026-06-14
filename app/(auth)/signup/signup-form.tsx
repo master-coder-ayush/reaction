@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { Eye, EyeOff, Sparkles, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -209,17 +210,20 @@ export function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <h2 className="text-lg font-semibold">Create your account</h2>
+      <h2 className="text-xl font-extrabold tracking-tight">
+        Create your account
+      </h2>
 
       {guestXp > 0 && (
-        <p className="rounded-lg bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="flex items-center gap-2 rounded-xl bg-primary-soft px-3 py-2 text-sm font-semibold text-primary-border">
+          <Sparkles className="h-4 w-4 shrink-0" />
           You&apos;ve earned {guestXp} XP this session — it&apos;ll be saved to
           your account.
         </p>
       )}
 
       {formError && (
-        <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-xl bg-destructive-soft px-3 py-2 text-sm font-medium text-destructive-border">
           {formError}
         </p>
       )}
@@ -293,20 +297,25 @@ export function SignupForm() {
             autoComplete="new-password"
             minLength={8}
             required
-            className="pr-16"
+            className="pr-12"
           />
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            {showPassword ? "Hide" : "Show"}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </Field>
 
       <fieldset>
-        <legend className="mb-1.5 block text-sm font-medium">Class</legend>
+        <legend className="mb-1.5 block text-sm font-semibold">Class</legend>
         <div className="flex gap-2">
           {(["11", "12", "both"] as const).map((value) => (
             <button
@@ -314,10 +323,10 @@ export function SignupForm() {
               key={value}
               onClick={() => setClassLevel(value)}
               className={
-                "flex-1 rounded-lg border px-3 py-2 text-sm font-medium capitalize transition-colors " +
+                "flex-1 rounded-xl border-2 px-3 py-2 text-sm font-bold capitalize transition-colors " +
                 (classLevel === value
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-input bg-background hover:bg-muted")
+                  ? "border-(--primary-border) bg-primary text-primary-foreground"
+                  : "border-border bg-background hover:bg-muted")
               }
             >
               {value === "both" ? "Both" : `Class ${value}`}
@@ -331,12 +340,13 @@ export function SignupForm() {
         className="w-full"
         disabled={submitting || !usernameValid}
       >
+        <UserPlus className="h-4 w-4" />
         {submitting ? "Creating account…" : "Sign up"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="font-bold text-primary hover:underline">
           Log in
         </Link>
       </p>

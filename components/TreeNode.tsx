@@ -39,7 +39,7 @@ export function TreeNode({
       type="button"
       onClick={() => onSelect(node)}
       aria-pressed={selected}
-      className="absolute flex items-center justify-center rounded-xl border-2 bg-card px-3 text-center text-sm font-semibold shadow-sm transition-transform hover:scale-105"
+      className="absolute flex items-center justify-center rounded-xl border-2 bg-card px-3 text-center text-sm font-bold shadow-soft transition-transform hover:scale-105"
       style={{
         left: x,
         top: y,

@@ -11,9 +11,11 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
 import { MechanismDiagram } from "@/components/MechanismDiagram";
 import { DraggableLabel } from "@/components/DraggableLabel";
+import { Button } from "@/components/ui/button";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { awardGuestXp, recordGuestResult } from "@/lib/guest";
 import { fireBadgeEarned, reportBadgeEvents } from "@/lib/badge-client";
@@ -230,13 +232,13 @@ export function MechanismSession({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="card-soft relative overflow-hidden p-5">
         {solved && <Confetti />}
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>{mechanism.name}</span>
+          <span className="font-bold text-foreground">{mechanism.name}</span>
           <span
-            className="rounded-full px-2 py-0.5 font-medium text-white"
+            className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"
             style={{ backgroundColor: accent }}
           >
             {mechanism.mechanismType}
@@ -259,7 +261,7 @@ export function MechanismSession({
         {/* Tray */}
         {phase === "playing" && (
           <>
-            <p className="mt-4 text-xs font-medium text-muted-foreground">
+            <p className="mt-4 text-xs font-bold text-muted-foreground">
               Labels{selected ? " · tap a slot to place" : ""}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -281,16 +283,16 @@ export function MechanismSession({
 
         {phase === "playing" && (
           <>
-            <button
+            <Button
               type="button"
               onClick={handleSubmit}
               disabled={!allFilled}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 w-full"
             >
               Submit
-            </button>
+            </Button>
             {attempts > 0 && (
-              <p className="mt-2 text-center text-xs text-destructive">
+              <p className="mt-2 text-center text-xs font-semibold text-destructive">
                 Not quite — wrong labels returned to the tray.{" "}
                 {MAX_ATTEMPTS - attempts} attempt
                 {MAX_ATTEMPTS - attempts === 1 ? "" : "s"} left.
@@ -303,35 +305,42 @@ export function MechanismSession({
           <div className="mt-4">
             <div
               className={
-                "rounded-lg px-3 py-2 text-sm font-semibold " +
+                "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold " +
                 (solved
-                  ? "bg-success/15 text-success"
+                  ? "bg-primary-soft text-primary-border"
                   : "bg-muted text-muted-foreground")
               }
             >
-              {solved
-                ? `✓ All correct! +${MECH_XP} XP`
-                : "Here's the correct labelling."}
+              {solved ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4" aria-hidden /> All correct! +
+                  {MECH_XP} XP
+                </>
+              ) : (
+                "Here's the correct labelling."
+              )}
             </div>
             {mechanism.storyText && (
-              <p className="mt-3 rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+              <p className="mt-3 rounded-xl border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
                 {mechanism.storyText}
               </p>
             )}
-            <button
-              type="button"
-              onClick={onNext}
-              className="mt-4 inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-            >
-              {hasNext ? "Next mechanism →" : "Done"}
-            </button>
+            <Button type="button" onClick={onNext} className="mt-4 w-full">
+              {hasNext ? (
+                <>
+                  Next mechanism <ArrowRight className="h-4 w-4" aria-hidden />
+                </>
+              ) : (
+                "Done"
+              )}
+            </Button>
           </div>
         )}
       </div>
 
       <DragOverlay>
         {activeDrag ? (
-          <span className="rounded-full border-2 border-primary bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary shadow-lg">
+          <span className="rounded-full border-2 border-secondary bg-secondary-soft px-3 py-1.5 text-sm font-bold text-secondary-border shadow-soft-lg">
             {activeDrag}
           </span>
         ) : null}

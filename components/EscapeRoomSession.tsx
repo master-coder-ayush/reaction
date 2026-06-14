@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Timer, KeyRound, Lightbulb, XCircle, ArrowLeft, ArrowRight, PartyPopper } from "lucide-react";
 import { AnswerOption, type AnswerState } from "@/components/AnswerOption";
 import { EscapeRoomDoorMap } from "@/components/EscapeRoomDoorMap";
 import { Confetti } from "@/components/Confetti";
+import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
@@ -171,31 +173,35 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
 
   if (escaped) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+      <div className="card-soft relative overflow-hidden p-6 text-center">
         <Confetti />
-        <div className="text-4xl">🎉</div>
-        <h2 className="mt-3 text-2xl font-bold">You escaped!</h2>
+        <span className="icon-chip mx-auto bg-accent-soft text-accent-border" aria-hidden>
+          <PartyPopper className="h-6 w-6" />
+        </span>
+        <h2 className="mt-3 text-2xl font-extrabold tracking-tight">You escaped!</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Time:{" "}
-          <span className="font-mono font-semibold text-foreground">
+          <span className="font-mono font-bold text-foreground">
             {formatTime(finalTime)}
           </span>
         </p>
-        <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-success/15 px-4 py-1.5 text-sm font-bold text-success">
-          +{awardedXp} XP · 🗝️ Escape Artist badge earned
+        <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-1.5 text-sm font-bold text-primary-border">
+          <KeyRound className="h-4 w-4" aria-hidden /> +{awardedXp} XP · Escape
+          Artist badge earned
         </div>
         <div className="mt-6 flex flex-col gap-2">
           <Link
             href="/leaderboard"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border-(--accent-border) bg-accent px-4 text-sm font-extrabold tracking-wide text-accent-foreground btn-chunky"
           >
-            See the Escape Room leaderboard →
+            See the Escape Room leaderboard
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
             href="/learn"
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center justify-center gap-1 text-sm font-semibold text-muted-foreground hover:text-foreground"
           >
-            ← Back to Chapter Map
+            <ArrowLeft className="h-4 w-4" aria-hidden /> Back to Chapter Map
           </Link>
         </div>
       </div>
@@ -210,11 +216,11 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-semibold">
+        <span className="text-sm font-extrabold">
           Door {doorIndex + 1} · {door.name}
         </span>
-        <span className="rounded-lg bg-muted px-2.5 py-1 font-mono text-sm font-bold tabular-nums">
-          ⏱ {formatTime(elapsed)}
+        <span className="inline-flex items-center gap-1 rounded-lg bg-muted px-2.5 py-1 font-mono text-sm font-bold tabular-nums">
+          <Timer className="h-4 w-4" aria-hidden /> {formatTime(elapsed)}
         </span>
       </div>
 
@@ -232,9 +238,9 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
             className={
               "h-2.5 w-2.5 rounded-full " +
               (i < reactionIndex
-                ? "bg-success"
+                ? "bg-primary"
                 : i === reactionIndex
-                  ? "bg-primary"
+                  ? "bg-accent"
                   : "bg-muted")
             }
             aria-hidden
@@ -242,13 +248,13 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
         ))}
       </div>
 
-      <div className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+      <div className="card-soft mt-4 p-5 sm:p-6">
         <div className="flex items-center justify-between text-xs">
-          <span className="tabular-nums text-muted-foreground">
+          <span className="font-semibold tabular-nums text-muted-foreground">
             Reaction {reactionIndex + 1} / {door.reactions.length}
           </span>
           <span
-            className="rounded-full px-2 py-0.5 font-medium text-white"
+            className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"
             style={{ backgroundColor: accent }}
           >
             {reaction.reactionTypeName}
@@ -259,7 +265,7 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
           <p className="mt-3 text-sm text-muted-foreground">{reaction.questionText}</p>
         ) : (
           <>
-            <h2 className="mt-3 text-lg font-semibold">{reaction.name}</h2>
+            <h2 className="mt-3 text-lg font-extrabold tracking-tight">{reaction.name}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{reaction.questionText}</p>
           </>
         )}
@@ -267,7 +273,7 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
         {reaction.equationText && (
           <p
             className={
-              "mt-3 rounded-lg bg-muted px-3 py-2 text-center font-mono " +
+              "mt-3 rounded-xl border border-border bg-muted px-3 py-2 text-center font-mono " +
               (isNameMode ? "text-lg font-semibold" : "text-base")
             }
           >
@@ -275,7 +281,7 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
           </p>
         )}
 
-        <p className="mt-4 text-sm font-medium">
+        <p className="mt-4 text-sm font-bold">
           {TYPE_LABEL[type] ?? "Choose the correct option"}
         </p>
 
@@ -296,34 +302,37 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
         </div>
 
         {wrong && (
-          <p className="mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
-            ✗ Not the key. The door stays shut — try again.
+          <p className="mt-3 flex items-center gap-2 rounded-xl bg-destructive-soft px-3 py-2 text-sm font-bold text-destructive-border">
+            <XCircle className="h-4 w-4" aria-hidden /> Not the key. The door stays
+            shut — try again.
           </p>
         )}
 
         {showClue && reaction.whyText && (
-          <p className="mt-3 rounded-lg bg-primary/10 px-3 py-2 text-sm text-foreground">
-            💡 {reaction.whyText}
+          <p className="mt-3 flex items-start gap-2 rounded-xl bg-info-soft px-3 py-2 text-sm text-info-border">
+            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <span>{reaction.whyText}</span>
           </p>
         )}
 
         <div className="mt-5 flex gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={useClue}
             disabled={showClue || !reaction.whyText}
-            className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Need a clue (−{ESCAPE_CLUE_COST} XP)
-          </button>
-          <button
+            <Lightbulb className="h-4 w-4" aria-hidden /> Clue (−{ESCAPE_CLUE_COST} XP)
+          </Button>
+          <Button
             type="button"
+            variant="accent"
             onClick={handleSubmit}
             disabled={selectedId == null}
-            className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1"
           >
-            Try the key 🔑
-          </button>
+            Try the key <KeyRound className="h-4 w-4" aria-hidden />
+          </Button>
         </div>
       </div>
     </div>

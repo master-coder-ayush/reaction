@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { X, ArrowRight } from "lucide-react";
 import { NODE_H, NODE_W, TreeNode, nodePos } from "@/components/TreeNode";
 import { reactionColorVar } from "@/lib/constants";
 import type { TreeDTO, TreeNodeDTO } from "@/lib/tree";
@@ -45,14 +46,14 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
 
   if (tree.nodes.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground shadow-sm">
+      <div className="card-soft p-6 text-center text-sm text-muted-foreground">
         No reaction tree for this chapter yet.
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+    <div className="card-soft p-4">
       <div className="overflow-x-auto pb-2">
         <div
           className="relative mx-auto"
@@ -132,19 +133,20 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
       <AnimatePresence>
         {selected && (
           <motion.div
-            className="mt-2 rounded-xl border border-border bg-background p-4"
+            className="mt-2 rounded-2xl border border-border bg-muted/40 p-4"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
           >
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold">{selected.compoundName}</h4>
+              <h4 className="text-sm font-extrabold tracking-tight">{selected.compoundName}</h4>
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                aria-label="Close"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
               >
-                Close ✕
+                <X className="h-4 w-4" aria-hidden />
               </button>
             </div>
             {nodeReactions.length > 0 ? (
@@ -152,14 +154,14 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
                 {nodeReactions.map((r) => (
                   <li
                     key={r.id}
-                    className="flex items-center justify-between gap-3 text-sm"
+                    className="flex items-center justify-between gap-3 text-sm font-semibold"
                   >
                     <span>{r.name}</span>
                     <Link
                       href={`/practice/${tree.chapterId}/module-1`}
-                      className="shrink-0 rounded-md bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:opacity-90"
+                      className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary px-3 py-1 text-xs font-bold text-primary-foreground transition-colors hover:brightness-105"
                     >
-                      Practice this reaction →
+                      Practice <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                     </Link>
                   </li>
                 ))}
@@ -169,7 +171,7 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
                 No specific reactions tagged for {selected.compoundName} yet.{" "}
                 <Link
                   href={`/practice/${tree.chapterId}/module-1`}
-                  className="text-primary hover:underline"
+                  className="font-bold text-primary hover:underline"
                 >
                   Practice this chapter →
                 </Link>

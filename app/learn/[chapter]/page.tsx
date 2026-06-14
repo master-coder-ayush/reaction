@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { ArrowLeft, Swords, ClipboardList } from "lucide-react";
 import { auth } from "@/auth";
-import { Nav } from "@/components/Nav";
-import { GuestBanner } from "@/components/GuestBanner";
+import { AppShell } from "@/components/AppShell";
 import { ReactionTree } from "@/components/ReactionTree";
 import { loadTree } from "@/lib/tree";
 import { loadChapterProgress, loadLoggedInDashboard } from "@/lib/dashboard";
@@ -43,11 +43,9 @@ export default async function ChapterOverviewPage({
 
   if (!validChapter || !chapterMeta) {
     return (
-      <>
-        {isGuest && <GuestBanner />}
-        <Nav isGuest={isGuest} username={session?.user?.username} />
+      <AppShell isGuest={isGuest} username={session?.user?.username}>
         <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
-          <div className="rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground shadow-sm">
+          <div className="card-soft p-6 text-center text-sm text-muted-foreground">
             That chapter doesn&apos;t exist.{" "}
             <Link href="/learn" className="text-primary hover:underline">
               Back to the chapter map
@@ -55,7 +53,7 @@ export default async function ChapterOverviewPage({
             .
           </div>
         </main>
-      </>
+      </AppShell>
     );
   }
 
@@ -84,21 +82,19 @@ export default async function ChapterOverviewPage({
   const bossReady = total > 0 && mastered >= total;
 
   return (
-    <>
-      {isGuest && <GuestBanner />}
-      <Nav isGuest={isGuest} xp={xp} username={session?.user?.username} />
-
+    <AppShell isGuest={isGuest} xp={xp} username={session?.user?.username}>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         <Link
           href="/learn"
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
         >
-          ← Chapter Map
+          <ArrowLeft className="h-4 w-4" />
+          Chapter Map
         </Link>
 
-        <div className="mt-2 flex items-start justify-between gap-3">
+        <div className="mt-3 flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-2xl font-extrabold tracking-tight">
               {chapterMeta.name}
             </h1>
             {tree.categoryName && (
@@ -108,22 +104,23 @@ export default async function ChapterOverviewPage({
             )}
           </div>
           {bossReady && (
-            <span className="animate-pulse rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-600">
-              ⚔️ Boss Level Ready
+            <span className="inline-flex animate-pulse items-center gap-1.5 rounded-full bg-warning-soft px-3 py-1 text-xs font-bold text-warn-border">
+              <Swords className="h-3.5 w-3.5" />
+              Boss Level Ready
             </span>
           )}
         </div>
 
         {/* Progress (logged-in). */}
         {userId != null && total > 0 && (
-          <div className="mt-4 rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="card-soft mt-4 p-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">
+              <span className="font-bold">
                 {mastered}/{total} reactions mastered
               </span>
-              <span className="text-muted-foreground">{pct}%</span>
+              <span className="font-semibold text-muted-foreground">{pct}%</span>
             </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-primary transition-all"
                 style={{ width: `${pct}%` }}
@@ -136,9 +133,10 @@ export default async function ChapterOverviewPage({
         <div className="mt-4">
           <Link
             href={`/learn/${chapterId}/chart`}
-            className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-3 text-sm font-medium hover:bg-muted"
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-card px-3 text-sm font-semibold shadow-soft hover:bg-muted"
           >
-            📋 Conversion Chart (Study Aid)
+            <ClipboardList className="h-4 w-4 text-info" />
+            Conversion Chart (Study Aid)
           </Link>
         </div>
 
@@ -204,7 +202,7 @@ export default async function ChapterOverviewPage({
           </div>
         </section>
       </main>
-    </>
+    </AppShell>
   );
 }
 

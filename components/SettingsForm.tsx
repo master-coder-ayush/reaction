@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { Lock, ShieldAlert, Trash2, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // SettingsForm (Sprint 8 §8.2). Account fields + privacy toggle + password
 // change + account deletion. Each section saves independently via PATCH (or
@@ -101,48 +104,52 @@ export function SettingsForm({
   return (
     <div className="space-y-8">
       {/* Account */}
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <h2 className="text-lg font-bold">Account</h2>
+      <section className="card-soft p-5">
+        <h2 className="flex items-center gap-2.5 text-lg font-extrabold tracking-tight">
+          <span
+            className="icon-chip h-8 w-8 bg-secondary-soft text-secondary-border"
+            aria-hidden
+          >
+            <User className="h-4 w-4" />
+          </span>
+          Account
+        </h2>
         <div className="mt-4 space-y-3">
           <Field label="Full name">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
-            />
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
           </Field>
           <Field label="Email">
-            <input
-              value={email}
-              disabled
-              className="h-10 w-full rounded-lg border border-border bg-muted px-3 text-sm text-muted-foreground"
-            />
+            <Input value={email} disabled className="bg-muted text-muted-foreground" />
           </Field>
           <Field label="Phone">
-            <input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
-            />
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
           </Field>
         </div>
-        <button
-          type="button"
-          onClick={saveAccount}
-          className="mt-4 inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-        >
-          Save changes
-        </button>
-        {accountMsg && (
-          <span className="ml-3 text-sm text-muted-foreground">{accountMsg}</span>
-        )}
+        <div className="mt-4 flex items-center gap-3">
+          <Button type="button" onClick={saveAccount} variant="primary" size="sm">
+            Save changes
+          </Button>
+          {accountMsg && (
+            <span className="text-sm font-medium text-muted-foreground">
+              {accountMsg}
+            </span>
+          )}
+        </div>
       </section>
 
       {/* Privacy */}
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <h2 className="text-lg font-bold">Privacy</h2>
-        <label className="mt-4 flex items-center justify-between">
-          <span className="text-sm font-medium">
+      <section className="card-soft p-5">
+        <h2 className="flex items-center gap-2.5 text-lg font-extrabold tracking-tight">
+          <span
+            className="icon-chip h-8 w-8 bg-info-soft text-info-border"
+            aria-hidden
+          >
+            <Lock className="h-4 w-4" />
+          </span>
+          Privacy
+        </h2>
+        <label className="mt-4 flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold">
             Public Profile: {isPublic ? "ON" : "OFF"}
           </span>
           <button
@@ -151,13 +158,13 @@ export function SettingsForm({
             aria-checked={isPublic}
             onClick={() => togglePrivacy(!isPublic)}
             className={
-              "relative h-6 w-11 rounded-full transition-colors " +
+              "relative h-6 w-11 shrink-0 rounded-full transition-colors " +
               (isPublic ? "bg-primary" : "bg-muted-foreground/40")
             }
           >
             <span
               className={
-                "absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform " +
+                "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-soft transition-transform " +
                 (isPublic ? "translate-x-5" : "translate-x-0.5")
               }
             />
@@ -168,7 +175,7 @@ export function SettingsForm({
             Your profile is live at{" "}
             <Link
               href={`/u/${username}`}
-              className="text-primary hover:underline"
+              className="font-semibold text-secondary hover:underline"
             >
               /u/{username}
             </Link>
@@ -178,42 +185,61 @@ export function SettingsForm({
       </section>
 
       {/* Password */}
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <h2 className="text-lg font-bold">Change password</h2>
+      <section className="card-soft p-5">
+        <h2 className="flex items-center gap-2.5 text-lg font-extrabold tracking-tight">
+          <span
+            className="icon-chip h-8 w-8 bg-accent-soft text-accent-border"
+            aria-hidden
+          >
+            <Lock className="h-4 w-4" />
+          </span>
+          Change password
+        </h2>
         <div className="mt-4 space-y-3">
           <Field label="Current password">
-            <input
+            <Input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
             />
           </Field>
           <Field label="New password">
-            <input
+            <Input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
             />
           </Field>
         </div>
-        <button
-          type="button"
-          onClick={changePassword}
-          className="mt-4 inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90"
-        >
-          Update password
-        </button>
-        {pwMsg && (
-          <span className="ml-3 text-sm text-muted-foreground">{pwMsg}</span>
-        )}
+        <div className="mt-4 flex items-center gap-3">
+          <Button
+            type="button"
+            onClick={changePassword}
+            variant="primary"
+            size="sm"
+          >
+            Update password
+          </Button>
+          {pwMsg && (
+            <span className="text-sm font-medium text-muted-foreground">
+              {pwMsg}
+            </span>
+          )}
+        </div>
       </section>
 
       {/* Danger zone */}
-      <section className="rounded-2xl border border-destructive/40 bg-card p-5 shadow-sm">
-        <h2 className="text-lg font-bold text-destructive">Delete account</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <section className="rounded-2xl border border-destructive/40 bg-card p-5 shadow-soft">
+        <h2 className="flex items-center gap-2.5 text-lg font-extrabold tracking-tight text-destructive">
+          <span
+            className="icon-chip h-8 w-8 bg-destructive-soft text-destructive-border"
+            aria-hidden
+          >
+            <ShieldAlert className="h-4 w-4" />
+          </span>
+          Delete account
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
           Permanently deletes your account, XP, badges, and cards. This cannot be
           undone.
         </p>
@@ -221,31 +247,34 @@ export function SettingsForm({
           <button
             type="button"
             onClick={() => setConfirmDelete(true)}
-            className="mt-4 inline-flex h-10 items-center rounded-lg border border-destructive px-4 text-sm font-semibold text-destructive hover:bg-destructive/10"
+            className="mt-4 inline-flex h-9 items-center gap-2 rounded-2xl border-2 border-destructive/60 bg-card px-4 text-sm font-extrabold tracking-wide text-destructive transition-colors hover:bg-destructive-soft"
           >
+            <Trash2 className="h-4 w-4" />
             Delete account
           </button>
         ) : (
-          <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/5 p-4">
-            <p className="text-sm font-medium">
+          <div className="mt-4 rounded-xl border border-destructive/40 bg-destructive-soft/50 p-4">
+            <p className="text-sm font-bold">
               Are you sure? This is permanent.
             </p>
             <div className="mt-3 flex gap-2">
-              <button
+              <Button
                 type="button"
                 onClick={deleteAccount}
                 disabled={deleting}
-                className="inline-flex h-10 items-center rounded-lg bg-destructive px-4 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                variant="destructive"
+                size="sm"
               >
                 {deleting ? "Deleting…" : "Yes, delete everything"}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setConfirmDelete(false)}
-                className="inline-flex h-10 items-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted"
+                variant="outline"
+                size="sm"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -263,7 +292,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">
+      <span className="mb-1.5 block text-xs font-bold text-muted-foreground">
         {label}
       </span>
       {children}

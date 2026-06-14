@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Sparkles, Star } from "lucide-react";
 import { Countdown } from "@/components/Countdown";
+import { Button } from "@/components/ui/button";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { reactionColorVar } from "@/lib/constants";
 import { awardGuestXp } from "@/lib/guest";
@@ -43,8 +45,9 @@ export function ReactionOfTheDay({
 
   if (!challenge) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <div className="text-sm font-semibold text-muted-foreground">
+      <div className="card-soft p-5">
+        <div className="flex items-center gap-2 text-sm font-extrabold tracking-tight text-muted-foreground">
+          <Star className="h-4 w-4" aria-hidden />
           Reaction of the Day
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -94,7 +97,7 @@ export function ReactionOfTheDay({
 
   return (
     <div
-      className="pulse-border rounded-2xl border-2 bg-card p-5 shadow-sm"
+      className="pulse-border rounded-2xl border-2 bg-card p-5 shadow-soft"
       style={
         {
           borderColor: accent,
@@ -102,53 +105,72 @@ export function ReactionOfTheDay({
         } as React.CSSProperties
       }
     >
-      <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold" style={{ color: accent }}>
-          ⭐ Reaction of the Day
+      <div className="flex items-center justify-between gap-3">
+        <div
+          className="flex items-center gap-2 text-sm font-extrabold tracking-tight"
+          style={{ color: accent }}
+        >
+          <span
+            className="icon-chip h-8 w-8"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${accent} 16%, transparent)`,
+            }}
+            aria-hidden
+          >
+            <Star className="h-4 w-4 fill-current" />
+          </span>
+          Reaction of the Day
         </div>
-        <div className="text-xs tabular-nums text-muted-foreground">
+        <div className="text-xs font-semibold tabular-nums text-muted-foreground">
           Next in <Countdown />
         </div>
       </div>
 
-      <h3 className="mt-2 text-lg font-semibold">{challenge.name}</h3>
+      <h3 className="mt-3 text-lg font-extrabold tracking-tight">
+        {challenge.name}
+      </h3>
       <p className="mt-1 text-sm text-muted-foreground">
         {challenge.questionText}
       </p>
       {challenge.equationText && (
-        <p className="mt-2 rounded-lg bg-muted px-3 py-2 font-mono text-sm">
+        <p className="mt-2 rounded-xl bg-muted px-3 py-2 font-mono text-sm">
           {challenge.equationText}
         </p>
       )}
 
       <div className="mt-3 flex items-center gap-2">
         <span
-          className="rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"
           style={{ backgroundColor: accent }}
         >
           {challenge.reactionTypeName}
         </span>
         {!done && (
-          <span className="text-xs font-semibold text-success">
-            2× XP today — {bonusXp} XP
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-bold text-primary-border">
+            <Sparkles className="h-3 w-3" />2× XP today — {bonusXp} XP
           </span>
         )}
       </div>
 
-      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      {error && <p className="mt-2 text-xs font-semibold text-destructive">{error}</p>}
 
-      <button
+      <Button
         type="button"
         onClick={handleComplete}
         disabled={done || busy}
-        className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        variant="primary"
+        className="mt-4 w-full"
       >
-        {done
-          ? "✓ Completed today"
-          : busy
-            ? "Saving…"
-            : `Complete for ${bonusXp} XP`}
-      </button>
+        {done ? (
+          <>
+            <Check className="h-4 w-4" /> Completed today
+          </>
+        ) : busy ? (
+          "Saving…"
+        ) : (
+          `Complete for ${bonusXp} XP`
+        )}
+      </Button>
     </div>
   );
 }

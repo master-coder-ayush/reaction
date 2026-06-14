@@ -17,18 +17,66 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = "https://levelupchemistry.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://levelupchemistry.vercel.app"),
+  metadataBase: new URL(BASE_URL),
   title: {
-    default: "Level Up Chemistry",
+    default: "Level Up Chemistry — Master Organic Chemistry",
     template: "%s · Level Up Chemistry",
   },
   description:
-    "A Duolingo-style organic chemistry app — practise reactions, earn XP, collect cards, and climb the leaderboard.",
+    "A free Duolingo-style app for Class 11 & 12 students to master Organic Chemistry reactions. Practice MCQs, name reactions, mechanisms and pathways. Earn XP, collect cards, and climb the leaderboard.",
+  keywords: [
+    "organic chemistry",
+    "class 11 chemistry",
+    "class 12 chemistry",
+    "chemistry practice",
+    "name reactions",
+    "reaction mechanisms",
+    "chemistry app",
+    "gamified learning",
+    "CBSE chemistry",
+    "chemistry quiz",
+  ],
+  authors: [{ name: "Prachi Gupta" }],
+  creator: "Prachi Gupta",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icon", sizes: "32x32", type: "image/png" },
+      { url: "/icon", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    shortcut: "/icon",
+  },
   openGraph: {
     siteName: "Level Up Chemistry",
     type: "website",
+    url: BASE_URL,
+    title: "Level Up Chemistry — Master Organic Chemistry",
+    description:
+      "Free gamified Organic Chemistry practice for Class 11 & 12. Earn XP, unlock reaction cards, tackle boss levels and escape rooms.",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Level Up Chemistry — Master Organic Chemistry",
+    description:
+      "Free gamified Organic Chemistry practice for Class 11 & 12. Earn XP, unlock reaction cards, tackle boss levels and escape rooms.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: BASE_URL,
   },
 };
 

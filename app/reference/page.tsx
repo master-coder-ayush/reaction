@@ -11,7 +11,11 @@ import { loadLoggedInDashboard } from "@/lib/dashboard";
 export const metadata: Metadata = {
   title: "Reagent Reference",
   description:
-    "A colour-coded cheat sheet of organic chemistry reagents — oxidising, reducing, halogenating agents, bases, nucleophiles, and electrophiles.",
+    "Colour-coded cheat sheet of Organic Chemistry reagents for Class 11 & 12 — oxidising agents, reducing agents, halogenating agents, bases, nucleophiles and electrophiles.",
+  openGraph: {
+    title: "Reagent Reference · Level Up Chemistry",
+    description: "Quick-reference guide to all key Organic Chemistry reagents — colour-coded by type.",
+  },
 };
 
 // /reference (Sprint 8 §8.3). Full reagent classification reference, searchable

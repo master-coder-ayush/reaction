@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { EscapeRoomEntry } from "@/components/EscapeRoomEntry";
+
+export const metadata: Metadata = {
+  title: "Escape Room",
+  description:
+    "Unlock 5 doors by solving Organic Chemistry reaction puzzles. Use clues wisely, beat the clock, and escape — can you do it?",
+  openGraph: {
+    title: "Escape Room · Level Up Chemistry",
+    description: "Solve 5 doors of Organic Chemistry reaction puzzles to escape. Use clues, beat the clock.",
+  },
+};
 import { loadEscapeRoom } from "@/lib/escape";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 

@@ -1,6 +1,17 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { Award } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Badges",
+  description:
+    "Earn badges by hitting milestones in Level Up Chemistry — first reaction, winning streaks, card collector, boss slayer and more.",
+  openGraph: {
+    title: "Badges · Level Up Chemistry",
+    description: "Earn badges by hitting milestones — streaks, card collections, boss victories and more.",
+  },
+};
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { BadgeGrid } from "@/components/BadgeGrid";

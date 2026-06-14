@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -10,6 +11,24 @@ import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Module 4" };
+  return {
+    title: `Module 4 · ${ch.name}`,
+    description: `Reaction Pathway Challenge — trace multi-step synthesis pathways through ${ch.name} (Class ${ch.classLevel}). Earn XP for each correct step.`,
+    openGraph: {
+      title: `${ch.name} Module 4 · Level Up Chemistry`,
+      description: `Multi-step ${ch.name} synthesis pathways. Trace the route and earn XP.`,
+    },
+  };
+}
 
 // Module 4 — Reaction Pathway Challenge (Sprint 6 §6.1).
 // Route: /practice/[chapter]/module-4. Lists the chapter's pathways; selecting

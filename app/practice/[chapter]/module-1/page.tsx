@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -11,6 +12,24 @@ import { loadChapterReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
 import { BookOpen } from "lucide-react";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Module 1" };
+  return {
+    title: `Module 1 · ${ch.name}`,
+    description: `Build the Reaction — MCQ practice for ${ch.name} (Class ${ch.classLevel}). Pick the right reagents and products to earn XP.`,
+    openGraph: {
+      title: `${ch.name} Module 1 · Level Up Chemistry`,
+      description: `MCQ practice for ${ch.name} reactions. Pick the right reagents to earn XP.`,
+    },
+  };
+}
 
 // Module 1 — Build the Reaction (MCQ). Route: /practice/[chapter]/module-1
 // where [chapter] is the category order_index (the chapter id used in the map).

@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ConversionChart } from "@/components/ConversionChart";
 import { loadConversionChart } from "@/lib/practice";
@@ -8,9 +9,19 @@ import { CHAPTERS } from "@/lib/constants";
 // /learn/[chapter]/chart (Sprint 8 §8.5). Printable conversion chart — minimal
 // chrome (no nav) so it prints cleanly as a study aid. Public.
 
-export const metadata = {
-  title: "Conversion Chart",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Conversion Chart" };
+  return {
+    title: `Conversion Chart · ${ch.name}`,
+    description: `Printable reagent conversion chart for ${ch.name} (Class ${ch.classLevel}) — all key reactants, reagents and products at a glance.`,
+  };
+}
 
 export default async function ChartPage({
   params,

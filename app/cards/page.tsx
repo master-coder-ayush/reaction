@@ -1,6 +1,17 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Reaction Cards",
+  description:
+    "Your collection of unlocked Organic Chemistry reaction cards. Master a reaction in practice to unlock its card — build your complete deck.",
+  openGraph: {
+    title: "Reaction Cards · Level Up Chemistry",
+    description: "Collect reaction cards by mastering Organic Chemistry. Build your complete deck.",
+  },
+};
 import { Layers } from "lucide-react";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -10,7 +21,6 @@ import { loadReactionCards } from "@/lib/cards";
 import { loadPathwayCards } from "@/lib/pathway";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
-export const metadata = { title: "Reaction Cards" };
 
 // /cards — Reaction card collection (PLAN.md §9, Sprint 7 §7.4) + the Pathway
 // Cards section (Sprint 6 §6.1). The grid is open to everyone: logged-in users

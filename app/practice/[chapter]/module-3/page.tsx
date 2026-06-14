@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -7,6 +8,24 @@ import { MechanismList } from "@/components/MechanismList";
 import { loadChapterMechanisms } from "@/lib/mechanism";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Module 3" };
+  return {
+    title: `Module 3 · ${ch.name}`,
+    description: `Drag & Drop Mechanisms — arrange the steps of ${ch.name} reaction mechanisms in the correct order (Class ${ch.classLevel}).`,
+    openGraph: {
+      title: `${ch.name} Module 3 · Level Up Chemistry`,
+      description: `Arrange reaction mechanism steps for ${ch.name}. Drag, drop, and earn XP.`,
+    },
+  };
+}
 
 // Module 3 — Drag & Drop Mechanism (Sprint 7 §7.1).
 // Route: /practice/[chapter]/module-3. Drag (or tap) mechanism labels onto the

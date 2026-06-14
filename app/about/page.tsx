@@ -17,7 +17,16 @@ import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
-export const metadata = { title: "About · LevelUp Chemistry" };
+export const metadata = {
+  title: "About",
+  description:
+    "Meet Prachi Gupta, the chemistry educator behind Level Up Chemistry — a free gamified platform helping Class 11 & 12 students master Organic Chemistry reactions.",
+  openGraph: {
+    title: "About · Level Up Chemistry",
+    description:
+      "Prachi Gupta, Post Graduate Chemistry Teacher, built Level Up Chemistry to make Organic Chemistry practice fun, free, and effective for every student.",
+  },
+};
 
 export default async function AboutPage() {
   const session = await auth();

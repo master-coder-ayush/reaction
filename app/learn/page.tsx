@@ -1,12 +1,22 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { Map } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Chapter Map",
+  description:
+    "Choose a chapter to practice — Hydrocarbons, Haloalkanes, Alcohols, Aldehydes, Carboxylic Acids, Amines and more. Class 11 & 12 Organic Chemistry.",
+  openGraph: {
+    title: "Chapter Map · Level Up Chemistry",
+    description: "Pick a chapter and start practicing Class 11 & 12 Organic Chemistry reactions.",
+  },
+};
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { ChapterMap } from "@/components/ChapterMap";
 import { loadChapterProgress, loadLoggedInDashboard } from "@/lib/dashboard";
 
-export const metadata = { title: "Chapter Map" };
 
 export default async function LearnPage() {
   const session = await auth();

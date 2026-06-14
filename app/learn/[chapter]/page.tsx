@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Swords, ClipboardList, CheckCircle2 } from "lucide-react";
 import { and, count, eq, sql } from "drizzle-orm";
@@ -21,6 +22,24 @@ import {
   userBadges,
   userProgress,
 } from "@/db/schema";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Chapter" };
+  return {
+    title: ch.name,
+    description: `Practice ${ch.name} reactions for Class ${ch.classLevel} — explore the reaction tree, track your progress across all 4 modules.`,
+    openGraph: {
+      title: `${ch.name} · Level Up Chemistry`,
+      description: `Master ${ch.name} reactions for Class ${ch.classLevel} Organic Chemistry.`,
+    },
+  };
+}
 
 const LEGEND: { label: string; color: string }[] = [
   { label: "Oxidation", color: "red" },

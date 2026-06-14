@@ -1,6 +1,21 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description:
+    "Your Level Up Chemistry dashboard — daily streak, XP progress, reaction of the day, and quick access to all practice modules.",
+  openGraph: {
+    title: "Level Up Chemistry — Master Organic Chemistry",
+    description:
+      "Free gamified Organic Chemistry practice for Class 11 & 12. Earn XP, unlock reaction cards, tackle boss levels and escape rooms.",
+  },
+  alternates: {
+    canonical: "https://levelupchemistry.vercel.app",
+  },
+};
 import {
   Sparkles,
   GraduationCap,

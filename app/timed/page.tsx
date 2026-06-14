@@ -1,6 +1,17 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
+
+export const metadata: Metadata = {
+  title: "Timed Challenge",
+  description:
+    "Race against the clock — answer 20 Organic Chemistry reaction questions as fast as you can. How many can you get right?",
+  openGraph: {
+    title: "Timed Challenge · Level Up Chemistry",
+    description: "20 Organic Chemistry questions, race the clock. How fast can you go?",
+  },
+};
 import { Zap } from "lucide-react";
 import { auth } from "@/auth";
 import { db } from "@/db";
@@ -10,7 +21,6 @@ import { TimedSession } from "@/components/TimedSession";
 import { loadAllReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
-export const metadata = { title: "Timed Challenge" };
 
 // /timed — Module 5 Timed Challenge (Sprint 7 §7.2). 60-second burst mode over
 // the full reaction pool. Logged-in users post their score to the Speed

@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
 import { Trophy } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Leaderboard",
+  description:
+    "See the top students on Level Up Chemistry this week. Who has earned the most XP mastering Organic Chemistry reactions?",
+  openGraph: {
+    title: "Leaderboard · Level Up Chemistry",
+    description: "Top students by XP this week. Compete and climb the Level Up Chemistry leaderboard.",
+  },
+};
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
@@ -11,7 +22,6 @@ import {
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Leaderboard" };
 
 // /leaderboard — visible to everyone (Sprint 4 §4.2). Defaults to the Weekly /
 // All view; the client table handles tab + filter switching and pins the

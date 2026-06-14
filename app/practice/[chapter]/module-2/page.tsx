@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -11,6 +12,24 @@ import { loadNamedReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
 import { BookOpen } from "lucide-react";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Module 2" };
+  return {
+    title: `Module 2 · ${ch.name}`,
+    description: `Name the Reaction — identify ${ch.name} reactions by name (Class ${ch.classLevel}). Earn XP for every correct identification.`,
+    openGraph: {
+      title: `${ch.name} Module 2 · Level Up Chemistry`,
+      description: `Name that reaction — ${ch.name} edition. Identify reactions to earn XP.`,
+    },
+  };
+}
 
 // Module 2 — Name the Reaction (Sprint 4 §4.1). Route: /practice/[chapter]/module-2
 // Shows only reactions flagged is_name_reaction; the card asks for the reaction

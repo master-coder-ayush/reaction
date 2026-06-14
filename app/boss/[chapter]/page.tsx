@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -12,6 +13,24 @@ import { badges } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ chapter: string }>;
+}): Promise<Metadata> {
+  const { chapter } = await params;
+  const ch = CHAPTERS.find((c) => c.id === Number(chapter));
+  if (!ch) return { title: "Boss Level" };
+  return {
+    title: `Boss Level · ${ch.name}`,
+    description: `Face the ${ch.name} Boss — 20 questions, 10 minutes, 16 correct to pass. Earn 200 XP and unlock the next chapter.`,
+    openGraph: {
+      title: `${ch.name} Boss Level · Level Up Chemistry`,
+      description: `20 hard ${ch.name} reaction questions. Beat the boss to unlock the next chapter.`,
+    },
+  };
+}
 
 // Boss level — Route: /boss/[chapter], where [chapter] is the category
 // order_index (chapter id). Gated for logged-in users: the chapter must be

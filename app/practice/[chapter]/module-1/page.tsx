@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -8,6 +10,7 @@ import { PracticeSession } from "@/components/PracticeSession";
 import { loadChapterReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
+import { BookOpen } from "lucide-react";
 
 // Module 1 — Build the Reaction (MCQ). Route: /practice/[chapter]/module-1
 // where [chapter] is the category order_index (the chapter id used in the map).
@@ -78,12 +81,11 @@ export default async function Module1Page({
               {chapterMeta?.name ?? categoryName ?? "Practice"} · Module 1
             </h1>
             <p className="text-sm text-muted-foreground">Build the Reaction</p>
-            <Link
-              href={`/practice/${chapterId}/module-2`}
-              className="mt-1 inline-block text-xs font-medium text-primary hover:underline"
-            >
-              Switch to Module 2: Name the Reaction →
-            </Link>
+            <div className="mt-1 flex gap-3 text-xs">
+              <Link href={`/practice/${chapterId}/module-2`} className="font-medium text-primary hover:underline">
+                Module 2: Name the Reaction →
+              </Link>
+            </div>
           </div>
           {/* Reference drawer trigger — content lands in Sprint 8. */}
           <button
@@ -93,7 +95,7 @@ export default async function Module1Page({
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground disabled:opacity-50"
             title="Reference charts — coming soon"
           >
-            📚
+            <BookOpen className="h-4 w-4" />
           </button>
         </div>
 

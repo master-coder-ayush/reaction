@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Zap, Check, X, Sparkles, Lightbulb } from "lucide-react";
+import { Zap, Check, X, Sparkles, Lightbulb, PartyPopper, ThumbsUp, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Session summary shown after 5 questions (Sprint 3 §3.2). Score, XP earned,
@@ -22,6 +22,7 @@ type Props = {
   chapterId: number;
   isGuest: boolean;
   onTryAgain: () => void;
+  module?: 1 | 2 | 3 | 4;
 };
 
 export function SessionSummary({
@@ -30,6 +31,7 @@ export function SessionSummary({
   chapterId,
   isGuest,
   onTryAgain,
+  module = 1,
 }: Props) {
   const total = results.length;
   const correct = results.filter((r) => r.correct).length;
@@ -42,7 +44,9 @@ export function SessionSummary({
   return (
     <div className="card-soft p-6">
       <div className="text-center">
-        <div className="text-4xl">{pct >= 80 ? "🎉" : pct >= 50 ? "👍" : "💪"}</div>
+        <span className="icon-chip mx-auto text-3xl" aria-hidden>
+          {pct >= 80 ? <PartyPopper className="h-8 w-8 text-primary" /> : pct >= 50 ? <ThumbsUp className="h-8 w-8 text-warn-border" /> : <Dumbbell className="h-8 w-8 text-destructive-border" />}
+        </span>
         <h2 className="mt-2 text-3xl font-extrabold tabular-nums tracking-tight">
           {correct} / {total}
         </h2>
@@ -127,6 +131,36 @@ export function SessionSummary({
           Back to Chapter
         </Link>
       </div>
+
+      <div className="mt-3 flex items-center justify-between gap-2">
+        {module > 1 ? (
+          <Link
+            href={`/practice/${chapterId}/module-${module - 1}`}
+            className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
+          >
+            ← Previous Module
+          </Link>
+        ) : (
+          <span />
+        )}
+
+        {module < 4 ? (
+          <Link
+            href={`/practice/${chapterId}/module-${module + 1}`}
+            className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
+          >
+            Next Module →
+          </Link>
+        ) : (
+          <Link
+            href={`/boss/${chapterId}`}
+            className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-1.5 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
+          >
+            Boss Level →
+          </Link>
+        )}
+      </div>
+
       <p className="sr-only">Chapter {chapterId}</p>
     </div>
   );

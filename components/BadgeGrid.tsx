@@ -60,7 +60,11 @@ export function BadgeGrid({
               "flex flex-col items-center rounded-2xl border p-4 text-center transition-all " +
               (earned
                 ? "border-border bg-card shadow-soft hover:-translate-y-0.5 hover:shadow-soft-lg"
-                : "border-dashed border-border bg-muted/40")
+                : "border-dashed border-border")
+            }
+            style={              earned
+                ? { }
+                : { backgroundColor: `#35c19f` }
             }
           >
             <div

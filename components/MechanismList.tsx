@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Puzzle, Target } from "lucide-react";
 import { MechanismSession } from "@/components/MechanismSession";
 import { Button } from "@/components/ui/button";
 import type { MechanismDTO } from "@/lib/mechanism";
@@ -21,7 +22,7 @@ export function MechanismList({
   if (mechanisms.length === 0) {
     return (
       <div className="card-soft p-6 text-center">
-        <div className="text-3xl">🧩</div>
+        <span className="icon-chip mx-auto" aria-hidden><Puzzle className="h-6 w-6" /></span>
         <h2 className="mt-2 text-lg font-extrabold tracking-tight">No mechanisms yet</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           This chapter doesn&apos;t have drag-and-drop mechanisms yet.
@@ -33,7 +34,7 @@ export function MechanismList({
   if (done) {
     return (
       <div className="card-soft p-6 text-center">
-        <div className="text-4xl">🎯</div>
+        <span className="icon-chip mx-auto" aria-hidden><Target className="h-6 w-6" /></span>
         <h2 className="mt-2 text-lg font-extrabold tracking-tight">Mechanisms complete!</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           You worked through all {mechanisms.length} mechanism

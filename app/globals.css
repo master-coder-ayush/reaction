@@ -15,7 +15,7 @@
   --foreground: #0d1033; /* dark violet */
 
   /* Surface tokens used by cards, inputs, borders */
-  --card: #ffe88f;
+  --card: #ffffff;
   --card-foreground: #0d1033;
   --popover: #ffd4ff;
   --popover-foreground: #0d1033;
@@ -195,6 +195,7 @@ a{
   box-shadow:
     0 1px 2px hsl(var(--shadow-color) / 0.08),
     0 6px 20px -8px hsl(var(--shadow-color) / 0.16);
+  padding: 12px;
 }
 
 /* Rounded, colored icon tile — use with bg-*-soft + text-* */
@@ -230,9 +231,7 @@ a{
 
 /* Subtle tinted page wash for shell content areas. */
 .bg-app {
-  background-image:
-    radial-gradient(60rem 60rem at 110% -10%, hsl(258 90% 66% / 0.06), transparent 60%),
-    radial-gradient(50rem 50rem at -10% 0%, hsl(199 89% 60% / 0.06), transparent 55%);
+  background-color: #baffd7;
 }
 
 /* Headline gradient text accent. */

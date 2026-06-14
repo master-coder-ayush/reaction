@@ -2,7 +2,7 @@
 // from lib/practice.ts so the client bundle never imports the server-only DB
 // module. The page's RSC loader lives in lib/practice.ts.
 
-export const SESSION_SIZE = 5;
+export const SESSION_SIZE = 10;
 
 /**
  * Draw up to `size` questions from `pool`, weighted toward reactions the user

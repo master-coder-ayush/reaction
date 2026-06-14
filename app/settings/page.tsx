@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { Settings as SettingsIcon } from "lucide-react";

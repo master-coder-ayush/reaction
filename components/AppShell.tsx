@@ -14,6 +14,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { Nav } from "@/components/Nav";
 import { SessionXpCounter } from "@/components/SessionXpCounter";
 import { cn } from "@/lib/utils";
+import { GuestBanner } from "@/components/GuestBanner";
 
 type LayoutMode = "sidebar" | "topbar";
 
@@ -97,7 +98,10 @@ export function AppShell({
           username={username}
           onToggleLayout={toggleLayout}
         />
-        <div className="bg-app flex flex-1 flex-col">{children}</div>
+        <div className={cn("bg-app flex flex-1 flex-col", isGuest && "pb-20")}>
+          {children}
+        </div>
+        {isGuest && <GuestBanner />}
       </>
     );
   }
@@ -142,7 +146,7 @@ export function AppShell({
 
       {/* Content column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/85 px-4 backdrop-blur">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/85 px-4 backdrop-blur" style={{backgroundColor: "#35c19f"}}>
           <button
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
@@ -161,13 +165,6 @@ export function AppShell({
               <PanelLeftClose className="h-5 w-5" />
             )}
           </button>
-
-          {isGuest && (
-            <span className="ml-1 hidden items-center gap-1.5 rounded-full bg-warning-soft px-3 py-1 text-xs font-bold text-warn-border sm:inline-flex">
-              <span className="h-2 w-2 rounded-full bg-warning" />
-              Guest Mode
-            </span>
-          )}
 
           <div className="flex-1" />
 
@@ -202,8 +199,11 @@ export function AppShell({
           )}
         </header>
 
-        <div className="bg-app flex flex-1 flex-col">{children}</div>
+        <div className={cn("bg-app flex flex-1 flex-col", isGuest && "pb-20")}>
+          {children}
+        </div>
       </div>
+      {isGuest && <GuestBanner />}
     </div>
   );
 }

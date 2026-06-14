@@ -36,13 +36,33 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
     return { width: w + 8, height: h + 8 };
   }, [tree.nodes]);
 
-  // Reactions whose name mentions the selected compound — loose containment so a
-  // node like "Alcohol" surfaces "… → Alcohol" reactions for practice.
+  // Edges that leave the selected node (outgoing conversions from this compound).
+  const outgoingEdges = useMemo(() => {
+    if (!selected) return [];
+    return tree.edges.filter((e) => e.fromKey === selected.nodeKey);
+  }, [selected, tree.edges]);
+
+  // Reactions matched by: name contains the compound name, OR the reaction name
+  // contains either the selected node's compound OR any destination compound of
+  // an outgoing edge. Fallback: show all chapter reactions if nothing matches.
   const nodeReactions = useMemo(() => {
     if (!selected) return [];
     const needle = selected.compoundName.toLowerCase();
-    return tree.reactions.filter((r) => r.name.toLowerCase().includes(needle));
-  }, [selected, tree.reactions]);
+    // Destination compound names from outgoing edges
+    const destNames = outgoingEdges
+      .map((e) => nodeByKey.get(e.toKey)?.compoundName.toLowerCase())
+      .filter(Boolean) as string[];
+
+    const matched = tree.reactions.filter((r) => {
+      const rName = r.name.toLowerCase();
+      if (rName.includes(needle)) return true;
+      for (const dest of destNames) {
+        if (rName.includes(dest)) return true;
+      }
+      return false;
+    });
+    return matched;
+  }, [selected, outgoingEdges, nodeByKey, tree.reactions]);
 
   if (tree.nodes.length === 0) {
     return (
@@ -149,26 +169,56 @@ export function ReactionTree({ tree }: { tree: TreeDTO }) {
                 <X className="h-4 w-4" aria-hidden />
               </button>
             </div>
+            {/* Outgoing conversions from this compound */}
+            {outgoingEdges.length > 0 && (
+              <div className="mt-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Converts to
+                </p>
+                <ul className="mt-1.5 space-y-1">
+                  {outgoingEdges.map((e) => {
+                    const dest = nodeByKey.get(e.toKey);
+                    return (
+                      <li key={e.id} className="flex items-center gap-2 text-sm">
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[11px] font-semibold text-white"
+                          style={{ backgroundColor: reactionColorVar(e.color) }}
+                        >
+                          {e.reagentLabel}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+                        <span className="font-semibold">{dest?.compoundName ?? e.toKey}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
             {nodeReactions.length > 0 ? (
-              <ul className="mt-3 space-y-2">
-                {nodeReactions.map((r) => (
-                  <li
-                    key={r.id}
-                    className="flex items-center justify-between gap-3 text-sm font-semibold"
-                  >
-                    <span>{r.name}</span>
-                    <Link
-                      href={`/practice/${tree.chapterId}/module-1`}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary px-3 py-1 text-xs font-bold text-primary-foreground transition-colors hover:brightness-105"
+              <div className="mt-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                  Related reactions
+                </p>
+                <ul className="mt-1.5 space-y-2">
+                  {nodeReactions.map((r) => (
+                    <li
+                      key={r.id}
+                      className="flex items-center justify-between gap-3 text-sm font-semibold"
                     >
-                      Practice <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      <span>{r.name}</span>
+                      <Link
+                        href={`/practice/${tree.chapterId}/module-1`}
+                        className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-primary px-3 py-1 text-xs font-bold text-primary-foreground transition-colors hover:brightness-105"
+                      >
+                        Practice <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : (
-              <p className="mt-2 text-sm text-muted-foreground">
-                No specific reactions tagged for {selected.compoundName} yet.{" "}
+              <p className="mt-3 text-sm text-muted-foreground">
                 <Link
                   href={`/practice/${tree.chapterId}/module-1`}
                   className="font-bold text-primary hover:underline"

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -47,6 +49,14 @@ export default async function Module3Page({
           <p className="text-sm text-muted-foreground">
             Drag &amp; Drop Mechanism
           </p>
+          <div className="mt-1 flex gap-3 text-xs">
+            <Link href={`/practice/${chapterId}/module-2`} className="font-medium text-muted-foreground hover:text-foreground">
+              ← Module 2
+            </Link>
+            <Link href={`/practice/${chapterId}/module-4`} className="font-medium text-primary hover:underline">
+              Module 4: Pathways →
+            </Link>
+          </div>
         </div>
 
         {!validChapter ? (

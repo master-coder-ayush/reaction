@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import {
   categories,
@@ -146,6 +146,8 @@ export async function loadConversionChart(
     .select({
       id: reactions.id,
       name: reactions.name,
+      equationText: reactions.equationText,
+      questionText: reactions.questionText,
       typeName: reactionTypes.name,
       typeColor: reactionTypes.color,
     })
@@ -157,6 +159,7 @@ export async function loadConversionChart(
     return { categoryName: category.name, rows: [] };
   }
 
+  const reactionIds = reactionRows.map((r) => r.id);
   const optRows = await db
     .select({
       reactionId: reactionOptions.reactionId,
@@ -164,7 +167,8 @@ export async function loadConversionChart(
       text: reactionOptions.text,
       isCorrect: reactionOptions.isCorrect,
     })
-    .from(reactionOptions);
+    .from(reactionOptions)
+    .where(inArray(reactionOptions.reactionId, reactionIds));
 
   const faces = new Map<
     number,
@@ -181,12 +185,56 @@ export async function loadConversionChart(
 
   const rows: ConversionRow[] = reactionRows.map((r) => {
     const f = faces.get(r.id) ?? {};
+
+    // Fall back to parsing equation_text when option-type data is missing.
+    // Equation text format: "A + B --reagent--> C + D" or "A + B → C + D"
+    // We extract: left side of arrow = reactant side, right side = product side,
+    // and anything between -- markers = reagent if not already known.
+    let { reactant, reagent, product } = f;
+    if ((!reactant || !product) && r.equationText) {
+      const eq = r.equationText;
+      // Split on → or --> (with optional dashes and spaces)
+      const arrowMatch = eq.match(/^(.+?)\s*(?:--[^-]*?--?>|→|-->)\s*(.+)$/);
+      if (arrowMatch) {
+        const lhs = arrowMatch[1].trim();
+        const rhs = arrowMatch[2].trim();
+
+        // Extract reagent from --reagent--> pattern if not already known
+        if (!reagent) {
+          const reagentMatch = eq.match(/--([^-]+?)-->/);
+          if (reagentMatch) reagent = reagentMatch[1].trim();
+        }
+
+        // From the lhs, strip the reagent part (after +) to get the main reactant
+        if (!reactant) {
+          // Take the first compound before + (main starting material)
+          const parts = lhs.split("+").map((p) => p.trim());
+          reactant = parts[0] ?? lhs;
+        }
+
+        // From the rhs, take the first compound before + (main product)
+        if (!product) {
+          const parts = rhs.split("+").map((p) => p.trim());
+          product = parts[0] ?? rhs;
+        }
+      }
+    }
+
+    // Also try to parse "Convert X → Y" from question_text
+    if (!reactant || !product) {
+      const qtMatch = r.questionText?.match(/Convert\s+(.+?)\s*[→\-]+\s*(.+?)[\.\s]/i);
+      if (qtMatch) {
+        if (!reactant) reactant = qtMatch[1].trim();
+        if (!product) product = qtMatch[2].trim();
+      }
+    }
+
     return {
       reactionId: r.id,
       name: r.name,
-      from: f.reactant ?? null,
-      reagent: f.reagent ?? null,
-      to: f.product ?? null,
+      from: reactant ?? null,
+      reagent: reagent ?? null,
+      to: product ?? null,
       typeName: r.typeName,
       typeColor: r.typeColor,
     };

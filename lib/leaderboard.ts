@@ -209,6 +209,21 @@ function rankAndSlice(
   return { rows, me };
 }
 
+/**
+ * Ensure the user's leaderboard snapshot rows exist for all current periods.
+ * Call this when a user visits the leaderboard and may have XP that was never
+ * snapshotted (e.g. awarded before the snapshot logic was in place).
+ */
+export async function ensureLeaderboardSnapshot(userId: number): Promise<void> {
+  const [stats] = await db
+    .select({ xp: userStats.xp })
+    .from(userStats)
+    .where(eq(userStats.userId, userId))
+    .limit(1);
+  if (!stats || stats.xp <= 0) return;
+  await upsertLeaderboardSnapshots(userId, stats.xp).catch(() => {});
+}
+
 // ---------------------------------------------------------------------------
 // Speed leaderboard (Sprint 7 §7.2). Ranks users by their best Timed Challenge
 // score (most correct-in-60s first) off userStats.bestTimedScore.

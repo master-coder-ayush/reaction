@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://levelupchemistry.in"),
+  metadataBase: new URL("https://levelupchemistry.vercel.app"),
   title: {
     default: "Level Up Chemistry",
     template: "%s · Level Up Chemistry",

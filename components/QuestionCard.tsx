@@ -81,14 +81,16 @@ export function QuestionCard({
 
   const isNameMode = questionType === "name";
 
-  // Only the options for the chosen question type, in display order.
-  const options = useMemo(
-    () =>
-      reaction.options
-        .filter((o) => o.optionType === questionType)
-        .sort((a, b) => a.displayOrder - b.displayOrder),
-    [reaction.options, questionType]
-  );
+  // Options for the chosen question type, shuffled so the correct answer
+  // isn't always first (displayOrder is authoring order, not quiz order).
+  const options = useMemo(() => {
+    const filtered = reaction.options.filter((o) => o.optionType === questionType);
+    for (let i = filtered.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+    }
+    return filtered;
+  }, [reaction.options, questionType]);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);

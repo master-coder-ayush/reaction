@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Award } from "lucide-react";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";

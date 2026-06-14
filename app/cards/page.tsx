@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { Layers } from "lucide-react";
 import { auth } from "@/auth";
@@ -32,9 +34,14 @@ export default async function CardsPage() {
           <span className="icon-chip bg-pink-soft text-pink-border">
             <Layers className="h-5 w-5" />
           </span>
-          <h1 className="text-2xl font-extrabold tracking-tight">
-            Reaction Cards
-          </h1>
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              Reaction Cards
+            </h1>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              Master a reaction (1 correct answer) to unlock its card. Collect all to build your study deck.
+            </p>
+          </div>
         </div>
 
         <CardGrid cards={cards} isGuest={isGuest} />

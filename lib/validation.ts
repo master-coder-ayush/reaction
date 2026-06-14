@@ -25,9 +25,10 @@ export const signupSchema = z.object({
     .or(z.literal("").transform(() => undefined)),
   password: z.string().min(8, "Password must be at least 8 characters."),
   classLevel: z.enum(["11", "12", "both"]),
-  // Guest session carried over from localStorage (optional).
-  guestXp: z.number().int().min(0).max(1_000_000).optional(),
+  // All attempted reaction ids — seeded as userProgress on signup.
   guestProgress: guestProgressSchema.optional(),
+  // Only the correctly answered reaction ids — used to compute XP server-side.
+  guestCorrectIds: guestProgressSchema.optional(),
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;

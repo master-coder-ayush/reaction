@@ -13,7 +13,7 @@ import {
   PATHWAY_COMPLETE_XP,
   PATHWAY_STEP_XP,
   type PathwayDTO,
-} from "@/lib/pathway";
+} from "@/lib/pathway-client";
 
 // ---------------------------------------------------------------------------
 // PathwaySession (Sprint 6 §6.1). Plays one pathway challenge step-by-step:

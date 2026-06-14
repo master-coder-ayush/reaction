@@ -10,7 +10,7 @@ import {
   BOSS_PASS_THRESHOLD,
   BOSS_QUESTION_COUNT,
   type BossQuestion,
-} from "@/lib/boss";
+} from "@/lib/boss-client";
 
 // Boss entry → session wrapper (Sprint 5 §5.1). Shows the entry screen (rules +
 // reward preview + Start), then hands off to <BossSession> once started. The

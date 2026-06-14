@@ -3,12 +3,14 @@ import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import {
+  ensureLeaderboardSnapshot,
   loadEscapeLeaderboard,
   loadLeaderboard,
   loadSpeedLeaderboard,
 } from "@/lib/leaderboard";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Leaderboard" };
 
 // /leaderboard — visible to everyone (Sprint 4 §4.2). Defaults to the Weekly /
@@ -19,6 +21,9 @@ export default async function LeaderboardPage() {
   const session = await auth();
   const isGuest = !session?.user?.id;
   const userId = isGuest ? null : Number(session!.user.id);
+
+  // Backfill snapshot in case this user has XP that was never snapshotted.
+  if (userId != null) await ensureLeaderboardSnapshot(userId);
 
   const { rows, me } = await loadLeaderboard("weekly", "all", userId, 50);
   const escape = await loadEscapeLeaderboard(userId, 20);

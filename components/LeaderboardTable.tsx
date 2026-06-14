@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Trophy, Zap, KeyRound, Flame } from "lucide-react";
 import type {
   ClassFilter,
   EscapeLeaderboardRow,
@@ -8,7 +10,11 @@ import type {
   Period,
   SpeedLeaderboardRow,
 } from "@/lib/leaderboard";
-import { formatTime } from "@/lib/escape";
+function formatTime(seconds: number): string {
+  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const ss = String(seconds % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
 
 // Leaderboard table with period tabs + class filter chips (Sprint 4 §4.2).
 // Medals for the top 3, the caller's own row pinned at the bottom and
@@ -108,9 +114,9 @@ export function LeaderboardTable({
       {/* Mode switch: XP leaderboard vs Escape Room (Sprint 5 §5.5). */}
       <div className="mb-3 flex gap-2">
         {([
-          { key: "xp", label: "🏆 XP" },
-          { key: "speed", label: "⚡ Speed" },
-          { key: "escape", label: "🗝️ Escape" },
+          { key: "xp", label: "XP", icon: <Trophy className="h-3.5 w-3.5" /> },
+          { key: "speed", label: "Speed", icon: <Zap className="h-3.5 w-3.5" /> },
+          { key: "escape", label: "Escape", icon: <KeyRound className="h-3.5 w-3.5" /> },
         ] as const).map((m) => (
           <button
             key={m.key}
@@ -123,7 +129,7 @@ export function LeaderboardTable({
                 : "border-border text-muted-foreground hover:border-warning/50")
             }
           >
-            {m.label}
+            <span className="inline-flex items-center gap-1">{m.icon}{m.label}</span>
           </button>
         ))}
       </div>
@@ -298,7 +304,7 @@ function EscapeRowItem({
       <span className="text-center text-sm font-semibold tabular-nums">
         {MEDALS[row.rank] ?? `#${row.rank}`}
       </span>
-      <div className="flex min-w-0 items-center gap-3">
+      <Link href={`/u/${row.username}`} className="flex min-w-0 items-center gap-3 hover:underline">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
@@ -310,7 +316,7 @@ function EscapeRowItem({
             </span>
           )}
         </p>
-      </div>
+      </Link>
       <span className="text-right font-mono text-sm font-bold tabular-nums">
         {formatTime(row.seconds)}
       </span>
@@ -382,7 +388,7 @@ function SpeedRowItem({ row, isMe }: { row: SpeedLeaderboardRow; isMe: boolean }
       <span className="text-center text-sm font-semibold tabular-nums">
         {MEDALS[row.rank] ?? `#${row.rank}`}
       </span>
-      <div className="flex min-w-0 items-center gap-3">
+      <Link href={`/u/${row.username}`} className="flex min-w-0 items-center gap-3 hover:underline">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
@@ -394,7 +400,7 @@ function SpeedRowItem({ row, isMe }: { row: SpeedLeaderboardRow; isMe: boolean }
             </span>
           )}
         </p>
-      </div>
+      </Link>
       <span className="text-right text-sm font-bold tabular-nums">
         {row.score}
       </span>
@@ -420,7 +426,7 @@ function LeaderboardRowItem({
         {MEDALS[row.rank] ?? `#${row.rank}`}
       </span>
 
-      <div className="flex min-w-0 items-center gap-3">
+      <Link href={`/u/${row.username}`} className="flex min-w-0 items-center gap-3 hover:underline">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning-soft text-xs font-bold text-warn-border">
           {initials(row.username)}
         </span>
@@ -434,10 +440,10 @@ function LeaderboardRowItem({
             )}
           </p>
           <p className="truncate text-xs text-muted-foreground">
-            {row.levelTitle} · 🔥 {row.streak}
+            {row.levelTitle} · <Flame className="inline h-3 w-3 text-orange-500" aria-hidden /> {row.streak}
           </p>
         </div>
-      </div>
+      </Link>
 
       <span className="text-right text-sm font-bold tabular-nums">
         {row.xp.toLocaleString()}

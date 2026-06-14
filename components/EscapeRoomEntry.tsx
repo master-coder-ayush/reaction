@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FlaskConical, Lock } from "lucide-react";
 import { EscapeRoomSession } from "@/components/EscapeRoomSession";
 import { EscapeRoomDoorMap } from "@/components/EscapeRoomDoorMap";
 import { Button } from "@/components/ui/button";
-import { ESCAPE_CLUE_COST, type EscapeDoor } from "@/lib/escape";
+import { ESCAPE_CLUE_COST, type EscapeDoor } from "@/lib/escape-client";
 
 // Escape Room entry (Sprint 5 §5.4): the lab intro, class selector, and door
 // preview, then hands off to <EscapeRoomSession> on start.
@@ -34,7 +34,10 @@ export function EscapeRoomEntry({ doorsByClass, isGuest }: Props) {
 
   return (
     <div className="card-soft p-6 text-center">
-      <div className="text-4xl">🧪🔒</div>
+      <span className="icon-chip mx-auto" aria-hidden>
+        <FlaskConical className="h-6 w-6" />
+        <Lock className="h-4 w-4 -ml-1" />
+      </span>
       <h1 className="mt-3 text-2xl font-extrabold tracking-tight">Escape Room</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         You are locked in the Organic Chemistry Lab. Solve reactions to unlock

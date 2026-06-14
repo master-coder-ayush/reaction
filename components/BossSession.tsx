@@ -10,7 +10,7 @@ import { reactionColorVar } from "@/lib/constants";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
 import { awardGuestXp } from "@/lib/guest";
-import { BOSS_TIME_SECONDS, BOSS_XP_AWARD, type BossQuestion } from "@/lib/boss";
+import { BOSS_TIME_SECONDS, BOSS_XP_AWARD, type BossQuestion } from "@/lib/boss-client";
 import type { WeakArea } from "@/components/WeakAreaCards";
 import type { ReactionOptionDTO } from "@/app/api/reactions/route";
 

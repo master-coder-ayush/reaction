@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Zap, Unlock, ArrowLeft, ArrowRight } from "lucide-react";
+import { CheckCircle2, Zap, Unlock, ArrowLeft, ArrowRight, Dumbbell } from "lucide-react";
 import { Confetti } from "@/components/Confetti";
 import { WeakAreaCards, type WeakArea } from "@/components/WeakAreaCards";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import {
   BOSS_PASS_THRESHOLD,
   BOSS_QUESTION_COUNT,
   BOSS_DAILY_ATTEMPT_LIMIT,
-} from "@/lib/boss";
+} from "@/lib/boss-client";
 
 // Boss results screen (Sprint 5 §5.1). Pass (≥16/20): celebratory, +200 XP, the
 // badge reveal (fired separately via the global badge-earned event), and the
@@ -88,7 +88,9 @@ export function BossResults({
 
   return (
     <div className="card-soft p-6 text-center">
-      <div className="text-4xl">💪</div>
+      <span className="icon-chip mx-auto bg-destructive-soft" aria-hidden>
+        <Dumbbell className="h-6 w-6 text-destructive-border" />
+      </span>
       <h2 className="mt-3 text-xl font-extrabold tracking-tight">Not quite! You need {BOSS_PASS_THRESHOLD}/{BOSS_QUESTION_COUNT}.</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         You scored{" "}

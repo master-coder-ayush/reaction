@@ -245,7 +245,9 @@ export function MechanismSession({
           </span>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          Drag (or tap) each label onto the right spot, then submit.
+          <span className="font-semibold">How to play:</span> Tap a label to
+          select it (it turns blue), then tap the dashed slot where it belongs.
+          On desktop you can also drag &amp; drop. Fill all slots, then hit Submit.
         </p>
 
         <div className="mt-4">
@@ -262,7 +264,9 @@ export function MechanismSession({
         {phase === "playing" && (
           <>
             <p className="mt-4 text-xs font-bold text-muted-foreground">
-              Labels{selected ? " · tap a slot to place" : ""}
+              {selected
+                ? `"${selected}" selected — now tap a dashed slot to place it`
+                : `Labels (${labelEntries.length - placedTexts.size} remaining) — tap one to select`}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {labelEntries.map((l) => (

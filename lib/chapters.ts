@@ -47,32 +47,15 @@ export async function clearedChapters(userId: number): Promise<Set<number>> {
   return cleared;
 }
 
-/** The set of unlocked chapter ids for a user (chapter 1 + any whose prereq is cleared). */
-export async function unlockedChapters(userId: number): Promise<Set<number>> {
-  const cleared = await clearedChapters(userId);
-  const unlocked = new Set<number>();
-  for (const chapter of CHAPTERS) {
-    if (chapter.unlockedBy === null || cleared.has(chapter.unlockedBy)) {
-      unlocked.add(chapter.id);
-    }
-  }
-  return unlocked;
+/** All chapters are unlocked for every user — no chapter gating. */
+export async function unlockedChapters(_userId: number): Promise<Set<number>> {
+  return new Set(CHAPTERS.map((c) => c.id));
 }
 
-/**
- * Is `chapterId` unlocked for this user? Guests (userId null) and chapter 1 are
- * always unlocked; otherwise the previous chapter's boss must be cleared.
- */
+/** All chapters are always accessible — no gating for any user. */
 export async function isChapterUnlocked(
-  userId: number | null,
-  chapterId: number
+  _userId: number | null,
+  _chapterId: number
 ): Promise<boolean> {
-  const chapter = CHAPTERS.find((c) => c.id === chapterId);
-  // Unknown chapter or no prerequisite → open.
-  if (!chapter || chapter.unlockedBy === null) return true;
-  // Guests are never gated.
-  if (userId == null) return true;
-
-  const cleared = await clearedChapters(userId);
-  return cleared.has(chapter.unlockedBy);
+  return true;
 }

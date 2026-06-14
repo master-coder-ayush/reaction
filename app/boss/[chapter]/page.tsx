@@ -6,9 +6,12 @@ import { attemptsToday, loadBossQuestions } from "@/lib/boss";
 import { bossBadgeByChapter, isChapterUnlocked } from "@/lib/chapters";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
+import { Lock } from "lucide-react";
 import { db } from "@/db";
 import { badges } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+export const dynamic = "force-dynamic";
 
 // Boss level — Route: /boss/[chapter], where [chapter] is the category
 // order_index (chapter id). Gated for logged-in users: the chapter must be
@@ -50,7 +53,7 @@ export default async function BossPage({
     const prev = CHAPTERS.find((c) => c.id === chapterMeta.unlockedBy);
     body = (
       <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-        <div className="text-3xl">🔒</div>
+        <span className="icon-chip mx-auto bg-muted" aria-hidden><Lock className="h-6 w-6 text-muted-foreground" /></span>
         <h1 className="mt-2 text-lg font-semibold">{chapterMeta.name} is locked</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Clear the {prev?.name ?? "previous chapter"} Boss Level to unlock this

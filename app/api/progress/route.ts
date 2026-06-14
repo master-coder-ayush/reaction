@@ -18,7 +18,7 @@ import {
 // unlocks the reaction card), and keep user_stats totals + streak in sync. XP is
 // awarded separately via /api/xp/award. Guests never reach here (localStorage).
 
-const MASTERY_THRESHOLD = 3;
+const MASTERY_THRESHOLD = 1;
 
 const schema = z.object({
   reactionId: z.number().int().positive(),
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       attempts: 1,
       correctCount: correctInc,
       lastAttempted: now,
-      mastered: correct && MASTERY_THRESHOLD <= 1,
+      mastered: correct && 1 >= MASTERY_THRESHOLD,
     })
     .onConflictDoUpdate({
       target: [userProgress.userId, userProgress.reactionId],

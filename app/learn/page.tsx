@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Map } from "lucide-react";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -27,9 +29,7 @@ export default async function LearnPage() {
               Chapter Map
             </h1>
             <p className="text-sm text-muted-foreground">
-              {isGuest
-                ? "Every chapter is open — practice anything you like."
-                : "Clear each chapter's boss to unlock the next."}
+              Every chapter is open — practice anything you like.
             </p>
           </div>
         </div>

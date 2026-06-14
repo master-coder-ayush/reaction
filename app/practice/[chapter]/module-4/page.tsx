@@ -9,6 +9,8 @@ import { loadChapterPathways } from "@/lib/pathway";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
 
+export const dynamic = "force-dynamic";
+
 // Module 4 — Reaction Pathway Challenge (Sprint 6 §6.1).
 // Route: /practice/[chapter]/module-4. Lists the chapter's pathways; selecting
 // one plays a step-by-step conversion that awards +20 XP per step and a +80 XP
@@ -64,6 +66,14 @@ export default async function Module4Page({
           <p className="text-sm text-muted-foreground">
             Reaction Pathway Challenge
           </p>
+          <div className="mt-1 flex gap-3 text-xs">
+            <Link href={`/practice/${chapterId}/module-3`} className="font-medium text-muted-foreground hover:text-foreground">
+              ← Module 3
+            </Link>
+            <Link href={`/boss/${chapterId}`} className="font-medium text-primary hover:underline">
+              Boss Level →
+            </Link>
+          </div>
         </div>
 
         {!validChapter ? (

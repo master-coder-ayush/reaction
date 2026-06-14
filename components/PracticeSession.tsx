@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { GraduationCap } from "lucide-react";
 import { QuestionCard, type AnsweredResult } from "@/components/QuestionCard";
 import {
   SessionSummary,
@@ -23,7 +24,7 @@ type Props = {
   /** Reactions already mastered (≥3 correct) so we can flag fresh unlocks. */
   masteredIds: number[];
   /** Which practice module this session is for. Defaults to Module 1. */
-  module?: 1 | 2;
+  module?: 1 | 2 | 3 | 4;
 };
 
 type Phase = "playing" | "summary";
@@ -89,7 +90,9 @@ export function PracticeSession({
   if (session.length === 0) {
     return (
       <div className="card-soft p-6 text-center">
-        <div className="text-3xl">🎓</div>
+        <span className="icon-chip mx-auto" aria-hidden>
+          <GraduationCap className="h-6 w-6" />
+        </span>
         <h2 className="mt-2 text-lg font-extrabold tracking-tight">
           You&apos;ve practiced all reactions!
         </h2>
@@ -220,6 +223,7 @@ export function PracticeSession({
         chapterId={chapterId}
         isGuest={isGuest}
         onTryAgain={handleTryAgain}
+        module={module}
       />
     );
   }

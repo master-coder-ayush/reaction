@@ -3,6 +3,7 @@ import { eq, inArray } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { db } from "@/db";
 import { users, userStats, userProgress, reactions } from "@/db/schema";
+import { xpForDifficulty } from "@/lib/xp";
 import { signupSchema } from "@/lib/validation";
 import { levelForXp } from "@/lib/constants";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
@@ -44,8 +45,8 @@ export async function POST(request: Request) {
     phone,
     password,
     classLevel,
-    guestXp = 0,
     guestProgress = [],
+    guestCorrectIds = [],
   } = parsed.data;
 
   // Pre-check for friendly duplicate errors (unique indexes are the real guard).
@@ -91,10 +92,33 @@ export async function POST(request: Request) {
     );
   }
 
-  // Guest XP transfer: credit accumulated session XP and seed streak at 1 day
-  // (the act of signing up + carrying progress counts as today's activity).
+  // Guest XP transfer: recompute XP server-side from the actual difficulty of
+  // each reaction the guest attempted. We never trust the XP value from the
+  // client — only the reaction id list, which we validate against the DB.
   const today = new Date().toISOString().slice(0, 10);
-  const startingXp = Math.max(0, Math.floor(guestXp));
+
+  let startingXp = 0;
+  let validIds: number[] = [];
+
+  // Validate all attempted ids for userProgress seeding.
+  if (guestProgress.length > 0) {
+    const uniqueIds = Array.from(new Set(guestProgress));
+    const existing = await db
+      .select({ id: reactions.id })
+      .from(reactions)
+      .where(inArray(reactions.id, uniqueIds));
+    validIds = existing.map((r) => r.id);
+  }
+
+  // XP is computed only from correctly answered reactions (separate list).
+  if (guestCorrectIds.length > 0) {
+    const uniqueCorrectIds = Array.from(new Set(guestCorrectIds));
+    const correct = await db
+      .select({ id: reactions.id, difficulty: reactions.difficulty })
+      .from(reactions)
+      .where(inArray(reactions.id, uniqueCorrectIds));
+    startingXp = correct.reduce((sum, r) => sum + xpForDifficulty(r.difficulty), 0);
+  }
 
   await db.insert(userStats).values({
     userId,
@@ -106,30 +130,18 @@ export async function POST(request: Request) {
     totalAttempts: guestProgress.length,
   });
 
-  // Mark guest-attempted reactions so the student isn't asked to repeat them.
-  // Filter to reaction ids that actually exist (the list comes from the client's
-  // localStorage and could be stale or tampered with — avoid an FK violation).
-  if (guestProgress.length > 0) {
-    const uniqueReactionIds = Array.from(new Set(guestProgress));
-    const existing = await db
-      .select({ id: reactions.id })
-      .from(reactions)
-      .where(inArray(reactions.id, uniqueReactionIds));
-    const validIds = existing.map((r) => r.id);
-
-    if (validIds.length > 0) {
-      await db
-        .insert(userProgress)
-        .values(
-          validIds.map((reactionId) => ({
-            userId,
-            reactionId,
-            attempts: 1,
-            lastAttempted: new Date(),
-          }))
-        )
-        .onConflictDoNothing();
-    }
+  if (validIds.length > 0) {
+    await db
+      .insert(userProgress)
+      .values(
+        validIds.map((reactionId) => ({
+          userId,
+          reactionId,
+          attempts: 1,
+          lastAttempted: new Date(),
+        }))
+      )
+      .onConflictDoNothing();
   }
 
   return NextResponse.json({ ok: true, username, transferredXp: startingXp });

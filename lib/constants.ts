@@ -30,6 +30,11 @@ export const WELCOME_NAME_KEY = "luc_welcome_name";
 // Guest accuracy counters (Sprint 3 §3.5): correct / attempts tracked locally.
 export const GUEST_CORRECT_KEY = "luc_guest_correct";
 export const GUEST_ATTEMPTS_KEY = "luc_guest_attempts";
+// Reaction ids the guest answered *correctly* — used for XP transfer on signup.
+export const GUEST_CORRECT_IDS_KEY = "luc_guest_correct_ids";
+// ISO timestamp of when the guest session started — used for 24h expiry.
+export const GUEST_SESSION_START_KEY = "luc_guest_session_start";
+export const GUEST_SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 // ---------------------------------------------------------------------------
 // Chapter map (PLAN.md §6 "Chapter Structure"). The boss-gating logic is

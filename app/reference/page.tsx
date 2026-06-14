@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { BookOpen } from "lucide-react";
 import { auth } from "@/auth";

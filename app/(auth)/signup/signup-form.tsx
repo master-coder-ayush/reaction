@@ -8,8 +8,8 @@ import { Eye, EyeOff, Sparkles, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  GUEST_XP_KEY,
   GUEST_PROGRESS_KEY,
+  GUEST_CORRECT_IDS_KEY,
   type ClassLevel,
 } from "@/lib/constants";
 import { USERNAME_RE } from "@/lib/validation";
@@ -21,29 +21,19 @@ type UsernameStatus =
   | { state: "taken"; reason: string }
   | { state: "invalid"; reason: string };
 
-function readGuestSession() {
-  if (typeof window === "undefined") return { xp: 0, progress: [] as number[] };
-  let xp = 0;
-  let progress: number[] = [];
+function readLocalIds(key: string): number[] {
+  if (typeof window === "undefined") return [];
   try {
-    xp = Number(window.localStorage.getItem(GUEST_XP_KEY) ?? "0") || 0;
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (n): n is number => typeof n === "number" && Number.isInteger(n)
+    );
   } catch {
-    /* ignore */
+    return [];
   }
-  try {
-    const raw = window.localStorage.getItem(GUEST_PROGRESS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        progress = parsed.filter(
-          (n): n is number => typeof n === "number" && Number.isInteger(n)
-        );
-      }
-    }
-  } catch {
-    /* ignore */
-  }
-  return { xp: Math.max(0, Math.floor(xp)), progress };
 }
 
 export function SignupForm() {
@@ -69,13 +59,11 @@ export function SignupForm() {
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Guest XP lives only in localStorage (client-only). Read it after mount so
-  // server render (0) and first client render match, avoiding a hydration
-  // mismatch; this is the legitimate "sync from an external system" effect.
-  const [guestXp, setGuestXp] = useState(0);
+  // Guest progress lives only in localStorage — read after mount to avoid SSR mismatch.
+  const [guestReactionCount, setGuestReactionCount] = useState(0);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGuestXp(readGuestSession().xp);
+    setGuestReactionCount(readLocalIds(GUEST_CORRECT_IDS_KEY).length);
   }, []);
 
   const normalizedUsername = username.trim().toLowerCase();
@@ -140,8 +128,6 @@ export function SignupForm() {
     setFieldErrors({});
     setSubmitting(true);
 
-    const guest = readGuestSession();
-
     try {
       const res = await fetch("/api/signup", {
         method: "POST",
@@ -153,8 +139,8 @@ export function SignupForm() {
           phone: phone.trim() || undefined,
           password,
           classLevel,
-          guestXp: guest.xp,
-          guestProgress: guest.progress,
+          guestProgress: readLocalIds(GUEST_PROGRESS_KEY),
+          guestCorrectIds: readLocalIds(GUEST_CORRECT_IDS_KEY),
         }),
       });
 
@@ -178,8 +164,8 @@ export function SignupForm() {
 
       // Account created — clear guest session, then auto-login.
       try {
-        window.localStorage.removeItem(GUEST_XP_KEY);
         window.localStorage.removeItem(GUEST_PROGRESS_KEY);
+        window.localStorage.removeItem(GUEST_CORRECT_IDS_KEY);
       } catch {
         /* ignore */
       }
@@ -214,11 +200,10 @@ export function SignupForm() {
         Create your account
       </h2>
 
-      {guestXp > 0 && (
+      {guestReactionCount > 0 && (
         <p className="flex items-center gap-2 rounded-xl bg-primary-soft px-3 py-2 text-sm font-semibold text-primary-border">
           <Sparkles className="h-4 w-4 shrink-0" />
-          You&apos;ve earned {guestXp} XP this session — it&apos;ll be saved to
-          your account.
+          You&apos;ve practiced {guestReactionCount} reaction{guestReactionCount !== 1 ? "s" : ""} — XP will be transferred to your account.
         </p>
       )}
 

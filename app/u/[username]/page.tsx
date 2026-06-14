@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -7,9 +9,10 @@ import { AppShell } from "@/components/AppShell";
 import { BadgeGrid } from "@/components/BadgeGrid";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
 import { loadProfile, avatarHue } from "@/lib/profile";
+import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { reactionColorVar } from "@/lib/constants";
 
-const SITE = "levelupchemistry.in";
+const SITE = "levelupchemistry.vercel.app";
 
 export async function generateMetadata({
   params,
@@ -39,6 +42,8 @@ export default async function ProfilePage({
   const session = await auth();
   const isGuest = !session?.user?.id;
   const viewerUsername = session?.user?.username;
+  const viewerId = isGuest ? null : Number(session?.user?.id);
+  const xp = viewerId != null ? (await loadLoggedInDashboard(viewerId)).xp : 0;
 
   const profile = await loadProfile(username);
 
@@ -48,7 +53,7 @@ export default async function ProfilePage({
 
   if (!profile) {
     return (
-      <AppShell isGuest={isGuest} username={viewerUsername}>
+      <AppShell isGuest={isGuest} xp={xp} username={viewerUsername}>
         <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-16 text-center">
           <h1 className="text-xl font-extrabold tracking-tight">
             User not found
@@ -73,7 +78,7 @@ export default async function ProfilePage({
   // Private profile: show nothing but the notice (unless it's your own).
   if (!profile.isPublic && !isOwn) {
     return (
-      <AppShell isGuest={isGuest} username={viewerUsername}>
+      <AppShell isGuest={isGuest} xp={xp} username={viewerUsername}>
         <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-16 text-center">
           <span className="icon-chip mx-auto bg-muted text-muted-foreground">
             <Lock className="h-5 w-5" />
@@ -97,27 +102,33 @@ export default async function ProfilePage({
   const profileUrl = `${SITE}/u/${profile.username}`;
 
   return (
-    <AppShell isGuest={isGuest} username={viewerUsername}>
+    <AppShell isGuest={isGuest} xp={xp} username={viewerUsername}>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
         {/* Header */}
-        <div className="fade-rise gradient-purple shadow-soft-lg relative overflow-hidden rounded-2xl p-6 text-white sm:p-8">
+        <div
+          className="fade-rise shadow-soft-lg relative overflow-hidden rounded-2xl p-6 sm:p-8"
+          style={{ background: "#ffffff", border: "1px solid #e2e2ef" }}
+        >
           <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <div
-              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-extrabold text-white ring-4 ring-white/30"
+              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-2xl font-extrabold text-white ring-4 ring-black/10"
               style={{ backgroundColor: `hsl(${hue} 65% 45%)` }}
             >
               {profile.username.slice(0, 2).toUpperCase()}
             </div>
 
             <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-2xl font-extrabold tracking-tight">
+              <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: "#0d1033" }}>
                 {profile.name}
               </h1>
-              <p className="text-sm font-medium text-white/80">
+              <p className="text-sm font-medium" style={{ color: "#6b7280" }}>
                 @{profile.username} · Class {profile.classLevel} · Member since{" "}
                 {memberSince}
               </p>
-              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-bold text-white backdrop-blur">
+              <span
+                className="mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold"
+                style={{ background: "#f0f0ff", color: "#7c00ff", border: "1px solid #e0d4ff" }}
+              >
                 Level {profile.level} · {profile.levelTitle}
               </span>
 
@@ -126,7 +137,8 @@ export default async function ProfilePage({
                 {isOwn && (
                   <Link
                     href="/settings"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-white/20 px-3 text-sm font-bold text-white backdrop-blur hover:bg-white/30"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-xl px-3 text-sm font-bold transition hover:opacity-80"
+                    style={{ background: "#f4f4f8", border: "1px solid #e2e2ef", color: "#0d1033" }}
                   >
                     <SettingsIcon className="h-4 w-4" />
                     Settings

@@ -15,6 +15,7 @@ import {
   LogIn,
   UserPlus,
   FlaskConical,
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,7 @@ const ITEMS: Item[] = [
   { href: "/reference", label: "Reference", icon: Library, active: "bg-info-soft text-info-border" },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy, active: "bg-warning-soft text-warn-border" },
   { href: "/badges", label: "Badges", icon: Award, active: "bg-accent-soft text-accent-border" },
+  { href: "/about", label: "About", icon: Info, active: "bg-info-soft text-info-border" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

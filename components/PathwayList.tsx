@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { BadgeCheck, Star } from "lucide-react";
 import { PathwaySession } from "@/components/PathwaySession";
 import { PathwayChain } from "@/components/PathwayChain";
-import type { PathwayDTO } from "@/lib/pathway";
+import type { PathwayDTO } from "@/lib/pathway-client";
 
 // ---------------------------------------------------------------------------
 // PathwayList (Sprint 6 §6.1). The Module 4 entry: a card per chapter pathway

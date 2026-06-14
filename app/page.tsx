@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import {
   Sparkles,
@@ -12,6 +14,8 @@ import {
   BookOpen,
   CalendarCheck,
   ArrowRight,
+  Lock,
+  Share2,
 } from "lucide-react";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/AppShell";
@@ -26,9 +30,10 @@ import { ReactionOfTheDay } from "@/components/ReactionOfTheDay";
 import { LeaderboardRankChip } from "@/components/LeaderboardRankChip";
 import { ContinueCard } from "@/components/ContinueCard";
 import { ChapterMap } from "@/components/ChapterMap";
+import { ProfileShareCard } from "@/components/ProfileShareCard";
 import { DashboardLeaderboard } from "@/components/DashboardLeaderboard";
 import { loadDailyChallenge, loadLoggedInDashboard } from "@/lib/dashboard";
-import { loadLeaderboard } from "@/lib/leaderboard";
+import { ensureLeaderboardSnapshot, loadLeaderboard } from "@/lib/leaderboard";
 
 export default async function Home({
   searchParams,
@@ -45,6 +50,7 @@ export default async function Home({
   const data = userId != null ? await loadLoggedInDashboard(userId) : null;
 
   // Dashboard leaderboard widget (Sprint 4 §4.5): top 3 weekly + own row.
+  if (userId != null) await ensureLeaderboardSnapshot(userId);
   const weekly = await loadLeaderboard("weekly", "all", userId, 3);
 
   const displayName = session?.user?.name ?? session?.user?.username ?? null;
@@ -279,6 +285,39 @@ export default async function Home({
             progress={data?.chapterProgress}
             unlocked={data?.unlocked}
           />
+        </section>
+
+        {/* Profile share section */}
+        <section>
+          <SectionHeader
+            icon={<Share2 className="h-5 w-5 text-accent" />}
+            title="Share your profile"
+            subtitle="Show off your chemistry progress"
+          />
+          {!isGuest && session?.user?.username ? (
+            <ProfileShareCard username={session.user.username} />
+          ) : (
+            <div className="card-soft p-4 flex items-center gap-4">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                <Lock className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-foreground">
+                  Sign up to get your unique shareable profile link
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Track your progress and share it with friends
+                </p>
+              </div>
+              <Link
+                href="/signup"
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-primary-foreground shadow-soft transition hover:-translate-y-0.5"
+              >
+                Sign up
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          )}
         </section>
       </main>
     </AppShell>

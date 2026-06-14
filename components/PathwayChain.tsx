@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { reactionColorVar } from "@/lib/constants";
-import type { PathwayStepDTO } from "@/lib/pathway";
+import type { PathwayStepDTO } from "@/lib/pathway-client";
 
 // ---------------------------------------------------------------------------
 // PathwayChain (Sprint 6 §6.1). Renders a completed/in-progress conversion as a

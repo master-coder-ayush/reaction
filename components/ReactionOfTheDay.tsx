@@ -147,7 +147,7 @@ export function ReactionOfTheDay({
         </span>
         {!done && (
           <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-bold text-primary-border">
-            <Sparkles className="h-3 w-3" />2× XP today — {bonusXp} XP
+            <Sparkles className="h-3 w-3" />Name reaction of the day
           </span>
         )}
       </div>
@@ -168,7 +168,7 @@ export function ReactionOfTheDay({
         ) : busy ? (
           "Saving…"
         ) : (
-          `Complete for ${bonusXp} XP`
+          "Mark as studied"
         )}
       </Button>
     </div>

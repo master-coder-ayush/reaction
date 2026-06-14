@@ -15,29 +15,12 @@ import {
 // 4 page (server-loaded) and the /cards page.
 // ---------------------------------------------------------------------------
 
-export type PathwayStepDTO = {
-  stepOrder: number;
-  compoundName: string;
-  reagentUsed: string | null;
-  reactionTypeColor: string | null;
-};
-
-export type PathwayDTO = {
-  id: number;
-  name: string;
-  description: string | null;
-  // The ordered list of compounds, starting compound first.
-  steps: PathwayStepDTO[];
-  // Convenience: first and last compound names.
-  startCompound: string;
-  endCompound: string;
-};
-
-/** XP awarded per correctly-picked pathway step (Sprint 6 §6.1). */
-export const PATHWAY_STEP_XP = 20;
-
-/** Bonus XP for completing a full pathway (PLAN.md §5 / Sprint 6 §6.1). */
-export const PATHWAY_COMPLETE_XP = 80;
+export type {
+  PathwayStepDTO,
+  PathwayDTO,
+} from "@/lib/pathway-client";
+export { PATHWAY_STEP_XP, PATHWAY_COMPLETE_XP } from "@/lib/pathway-client";
+import type { PathwayStepDTO, PathwayDTO } from "@/lib/pathway-client";
 
 /** Group raw step rows into a per-pathway ordered step list. */
 function buildSteps(

@@ -57,13 +57,7 @@ export function ChapterMap({ progress = {}, unlocked, isGuest }: Props) {
             key={chapter.id}
             chapter={chapter}
             progress={progress[chapter.id]}
-            // Guests: nothing is locked on the UI. Logged-in: respect unlock set
-            // (chapter 1 always unlocked).
-            locked={
-              isGuest
-                ? false
-                : chapter.unlockedBy !== null && !unlocked?.has(chapter.id)
-            }
+            locked={false}
           />
         ))}
       </div>

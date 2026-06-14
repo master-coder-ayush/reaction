@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { ConversionChart } from "@/components/ConversionChart";
 import { loadConversionChart } from "@/lib/practice";

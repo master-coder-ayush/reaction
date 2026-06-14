@@ -22,19 +22,15 @@ import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 // chapter's boss badge + 200 XP and unlocks the next chapter.
 // ---------------------------------------------------------------------------
 
-export const BOSS_QUESTION_COUNT = 20;
-export const BOSS_PASS_THRESHOLD = 16;
-export const BOSS_TIME_SECONDS = 10 * 60;
-export const BOSS_DAILY_ATTEMPT_LIMIT = 3;
-export const BOSS_XP_AWARD = 200;
-
-/**
- * A single boss question. `mode` tells the client which option set to render:
- * "build" reuses the Module 1 priority (reagent → product → reactant); "name"
- * forces the name MCQ. Carries the reaction name + why_text for the weak-area
- * report shown on a fail.
- */
-export type BossQuestion = ReactionDTO & { mode: "build" | "name" };
+export {
+  BOSS_QUESTION_COUNT,
+  BOSS_PASS_THRESHOLD,
+  BOSS_TIME_SECONDS,
+  BOSS_DAILY_ATTEMPT_LIMIT,
+  BOSS_XP_AWARD,
+  type BossQuestion,
+} from "@/lib/boss-client";
+import { BOSS_QUESTION_COUNT, BOSS_PASS_THRESHOLD, BOSS_TIME_SECONDS, type BossQuestion } from "@/lib/boss-client";
 
 export async function loadBossQuestions(
   chapter: number

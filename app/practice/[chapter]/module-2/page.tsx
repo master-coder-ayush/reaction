@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { and, eq, inArray } from "drizzle-orm";
 import { auth } from "@/auth";
@@ -8,6 +10,7 @@ import { PracticeSession } from "@/components/PracticeSession";
 import { loadNamedReactions } from "@/lib/practice";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 import { CHAPTERS } from "@/lib/constants";
+import { BookOpen } from "lucide-react";
 
 // Module 2 — Name the Reaction (Sprint 4 §4.1). Route: /practice/[chapter]/module-2
 // Shows only reactions flagged is_name_reaction; the card asks for the reaction
@@ -78,12 +81,14 @@ export default async function Module2Page({
               {chapterMeta?.name ?? categoryName ?? "Practice"} · Module 2
             </h1>
             <p className="text-sm text-muted-foreground">Name the Reaction</p>
-            <Link
-              href={`/practice/${chapterId}/module-1`}
-              className="mt-1 inline-block text-xs font-medium text-primary hover:underline"
-            >
-              ← Back to Module 1: Build the Reaction
-            </Link>
+            <div className="mt-1 flex gap-3 text-xs">
+              <Link href={`/practice/${chapterId}/module-1`} className="font-medium text-muted-foreground hover:text-foreground">
+                ← Module 1
+              </Link>
+              <Link href={`/practice/${chapterId}/module-3`} className="font-medium text-primary hover:underline">
+                Module 3: Mechanisms →
+              </Link>
+            </div>
           </div>
           <button
             type="button"
@@ -92,7 +97,7 @@ export default async function Module2Page({
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground disabled:opacity-50"
             title="Reference charts — coming soon"
           >
-            📚
+            <BookOpen className="h-4 w-4" />
           </button>
         </div>
 

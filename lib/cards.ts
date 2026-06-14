@@ -23,6 +23,9 @@ export type ReactionCardDTO = {
   chapterName: string;
   typeName: string;
   typeColor: string | null;
+  equationText: string | null;
+  whyText: string | null;
+  realLifeUse: string | null;
   reactant: string | null;
   reagent: string | null;
   product: string | null;
@@ -42,6 +45,9 @@ export async function loadReactionCards(
       chapterName: categories.name,
       typeName: reactionTypes.name,
       typeColor: reactionTypes.color,
+      equationText: reactions.equationText,
+      whyText: reactions.whyText,
+      realLifeUse: reactions.realLifeUse,
     })
     .from(reactions)
     .innerJoin(categories, eq(reactions.categoryId, categories.id))
@@ -100,6 +106,9 @@ export async function loadReactionCards(
       chapterName: r.chapterName,
       typeName: r.typeName,
       typeColor: r.typeColor,
+      equationText: r.equationText ?? null,
+      whyText: r.whyText ?? null,
+      realLifeUse: r.realLifeUse ?? null,
       reactant: face.reactant ?? null,
       reagent: face.reagent ?? null,
       product: face.product ?? null,

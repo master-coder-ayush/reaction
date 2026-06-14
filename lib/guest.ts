@@ -6,6 +6,9 @@ import {
   GUEST_XP_LOG_KEY,
   GUEST_CORRECT_KEY,
   GUEST_ATTEMPTS_KEY,
+  GUEST_CORRECT_IDS_KEY,
+  GUEST_SESSION_START_KEY,
+  GUEST_SESSION_TTL_MS,
 } from "@/lib/constants";
 import { applyXp, type AwardResult } from "@/lib/xp";
 
@@ -13,7 +16,52 @@ import { applyXp, type AwardResult } from "@/lib/xp";
 // Guest session helpers (client-only). Guests never hit the DB — their XP,
 // XP log, and attempted-reaction list live entirely in localStorage and are
 // migrated to the account on sign-up (see app/api/signup/route.ts).
+// Guest data expires after 24 hours; initGuestSession() must be called on
+// mount to stamp the start time and clear stale data.
 // ---------------------------------------------------------------------------
+
+const GUEST_KEYS = [
+  GUEST_XP_KEY,
+  GUEST_PROGRESS_KEY,
+  GUEST_XP_LOG_KEY,
+  GUEST_CORRECT_KEY,
+  GUEST_ATTEMPTS_KEY,
+  GUEST_CORRECT_IDS_KEY,
+];
+
+/** Call once on mount for guest pages. Stamps session start and clears expired data. */
+export function initGuestSession(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = window.localStorage.getItem(GUEST_SESSION_START_KEY);
+    if (raw) {
+      const started = Number(raw);
+      if (Date.now() - started > GUEST_SESSION_TTL_MS) {
+        // Expired — wipe all guest data.
+        for (const key of GUEST_KEYS) window.localStorage.removeItem(key);
+        window.localStorage.removeItem(GUEST_SESSION_START_KEY);
+      }
+    } else {
+      // First visit — stamp now.
+      window.localStorage.setItem(GUEST_SESSION_START_KEY, String(Date.now()));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Returns ms until guest data expires, or null if session not started yet. */
+export function guestExpiresInMs(): number | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(GUEST_SESSION_START_KEY);
+    if (!raw) return null;
+    const remaining = GUEST_SESSION_TTL_MS - (Date.now() - Number(raw));
+    return Math.max(0, remaining);
+  } catch {
+    return null;
+  }
+}
 
 export type GuestXpLogEntry = {
   amount: number;
@@ -128,24 +176,39 @@ export function readGuestAccuracy(): GuestAccuracy {
   }
 }
 
+/** Reaction ids the guest answered correctly — used for XP transfer on signup. */
+export function readGuestCorrectIds(): number[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(GUEST_CORRECT_IDS_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (n): n is number => typeof n === "number" && Number.isInteger(n)
+    );
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Record one guest answer: bump `guest_attempts`, and `guest_correct` when the
- * answer was right. Also records the attempted reaction id for sign-up migration.
+ * answer was right. Also records the attempted reaction id for sign-up migration,
+ * and the correct reaction id separately for accurate XP transfer.
  */
 export function recordGuestResult(reactionId: number, correct: boolean): void {
   recordGuestAttempt(reactionId);
   if (typeof window === "undefined") return;
   try {
     const acc = readGuestAccuracy();
-    window.localStorage.setItem(
-      GUEST_ATTEMPTS_KEY,
-      String(acc.attempts + 1)
-    );
+    window.localStorage.setItem(GUEST_ATTEMPTS_KEY, String(acc.attempts + 1));
     if (correct) {
-      window.localStorage.setItem(
-        GUEST_CORRECT_KEY,
-        String(acc.correct + 1)
-      );
+      window.localStorage.setItem(GUEST_CORRECT_KEY, String(acc.correct + 1));
+      // Track correct reaction ids separately so signup can award accurate XP.
+      const ids = new Set(readGuestCorrectIds());
+      ids.add(reactionId);
+      window.localStorage.setItem(GUEST_CORRECT_IDS_KEY, JSON.stringify(Array.from(ids)));
     }
   } catch {
     /* ignore */

@@ -21,6 +21,7 @@ import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 // ---------------------------------------------------------------------------
 
 const DURATION = 60; // seconds
+const MAX_QUESTIONS = 20;
 const TYPE_PRIORITY = ["name", "reagent", "product", "reactant"] as const;
 
 type Phase = "idle" | "countdown" | "running" | "done";
@@ -59,6 +60,9 @@ export function TimedSession({
   const [countdown, setCountdown] = useState(3);
   const [remaining, setRemaining] = useState(DURATION);
   const [order, setOrder] = useState<number[]>([]);
+  // Pre-shuffled options per question index, keyed by playable[] index.
+  // Computed once at start so the timer re-renders don't reshuffle them.
+  const [shuffledOptions, setShuffledOptions] = useState<Map<number, ReactionOptionDTO[]>>(new Map());
   const [pos, setPos] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [wrongId, setWrongId] = useState<number | null>(null);
@@ -74,7 +78,17 @@ export function TimedSession({
   );
 
   const start = useCallback(() => {
-    setOrder(shuffle(playable.map((_, i) => i)));
+    const newOrder = shuffle(playable.map((_, i) => i));
+    setOrder(newOrder);
+    // Pre-shuffle options for every question so re-renders from the timer
+    // don't reshuffle them mid-display.
+    const optMap = new Map<number, ReactionOptionDTO[]>();
+    for (const idx of newOrder) {
+      const r = playable[idx];
+      const qType = pickType(r.options);
+      optMap.set(idx, shuffle(r.options.filter((o) => o.optionType === qType)));
+    }
+    setShuffledOptions(optMap);
     setPos(0);
     setCorrectCount(0);
     setRemaining(DURATION);
@@ -226,7 +240,7 @@ export function TimedSession({
         </p>
 
         <p className="mt-4 text-sm font-semibold text-muted-foreground">
-          {isNewBest ? "🎉 New best!" : `Your best: ${best ?? correctCount}`}
+          {isNewBest ? "New best!" : `Your best: ${best ?? correctCount}`}
         </p>
 
         {isGuest && (
@@ -243,19 +257,24 @@ export function TimedSession({
   }
 
   // --- Running -------------------------------------------------------------
-  const reaction = playable[order[pos % order.length]];
+  const reactionIdx = order[pos];
+  const reaction = playable[reactionIdx];
   const qType = pickType(reaction.options);
   const isName = qType === "name";
-  const options = reaction.options
-    .filter((o) => o.optionType === qType)
-    .sort((a, b) => a.displayOrder - b.displayOrder);
+  // Use pre-shuffled options — computed once at start, stable across timer re-renders.
+  const options = shuffledOptions.get(reactionIdx) ?? shuffle(reaction.options.filter((o) => o.optionType === qType));
   const accent = reactionColorVar(reaction.reactionTypeColor);
 
   function handlePick(o: ReactionOptionDTO) {
     if (o.isCorrect) {
+      const nextPos = pos + 1;
       setCorrectCount((c) => c + 1);
       setWrongId(null);
-      setPos((p) => p + 1);
+      if (nextPos >= order.length || nextPos >= MAX_QUESTIONS) {
+        setPhase("done");
+      } else {
+        setPos(nextPos);
+      }
     } else {
       setWrongId(o.id);
       window.setTimeout(() => setWrongId((w) => (w === o.id ? null : w)), 350);
@@ -269,7 +288,7 @@ export function TimedSession({
       <div className="card-soft mt-4 p-5">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1 font-bold text-warn-border">
-            <Zap className="h-3.5 w-3.5" aria-hidden /> {correctCount} correct
+            <Zap className="h-3.5 w-3.5" aria-hidden /> {correctCount} / {Math.min(order.length, MAX_QUESTIONS)} correct
           </span>
           <span
             className="rounded-full px-2.5 py-0.5 text-xs font-bold text-white"

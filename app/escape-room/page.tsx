@@ -4,6 +4,8 @@ import { EscapeRoomEntry } from "@/components/EscapeRoomEntry";
 import { loadEscapeRoom } from "@/lib/escape";
 import { loadLoggedInDashboard } from "@/lib/dashboard";
 
+export const dynamic = "force-dynamic";
+
 // /escape-room — Escape Room mode (Sprint 5 §5.4). Open to everyone; guests can
 // play but their escape time / badge won't persist. Both class tracks are loaded
 // server-side so the client class selector switches instantly.

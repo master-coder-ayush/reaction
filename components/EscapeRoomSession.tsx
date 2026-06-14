@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Timer, KeyRound, Lightbulb, XCircle, ArrowLeft, ArrowRight, PartyPopper } from "lucide-react";
 import { AnswerOption, type AnswerState } from "@/components/AnswerOption";
@@ -16,7 +16,7 @@ import {
   ESCAPE_XP_AWARD,
   formatTime,
   type EscapeDoor,
-} from "@/lib/escape";
+} from "@/lib/escape-client";
 import type { ReactionOptionDTO } from "@/app/api/reactions/route";
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
@@ -73,28 +73,34 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
   const door = doors[doorIndex];
   const reaction = door?.reactions[reactionIndex];
 
-  function optionsFor(r: typeof reaction) {
-    if (!r) return { options: [] as ReactionOptionDTO[], type: "name" };
-    if (r.mode === "name") {
+  function shuffleArr<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Shuffle once per question (keyed by door+reaction index) so timer re-renders
+  // don't reshuffle the options mid-display.
+  const { options, type } = useMemo(() => {
+    if (!reaction) return { options: [] as ReactionOptionDTO[], type: "name" };
+    if (reaction.mode === "name") {
       return {
-        options: r.options
-          .filter((o) => o.optionType === "name")
-          .sort((a, b) => a.displayOrder - b.displayOrder),
+        options: shuffleArr(reaction.options.filter((o) => o.optionType === "name")),
         type: "name",
       };
     }
-    const type =
-      BUILD_PRIORITY.find((t) => r.options.some((o) => o.optionType === t)) ??
+    const t =
+      BUILD_PRIORITY.find((t) => reaction.options.some((o) => o.optionType === t)) ??
       "reagent";
     return {
-      options: r.options
-        .filter((o) => o.optionType === type)
-        .sort((a, b) => a.displayOrder - b.displayOrder),
-      type,
+      options: shuffleArr(reaction.options.filter((o) => o.optionType === t)),
+      type: t,
     };
-  }
-
-  const { options, type } = optionsFor(reaction);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doorIndex, reactionIndex]);
 
   async function complete() {
     const seconds = elapsedRef.current;

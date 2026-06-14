@@ -7,27 +7,21 @@ import {
   reactionTypes,
 } from "@/db/schema";
 import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
-
-// ---------------------------------------------------------------------------
-// Escape Room (Sprint 5 §5.4). Five doors, each a chapter for the chosen class.
-// Behind each door are 5 reactions the student must solve in sequence; a wrong
-// answer just resets that reaction (no penalty). Solving all 5 opens the door;
-// open all 5 doors to escape. A "clue" reveals the reaction's why_text for 10 XP.
-// ---------------------------------------------------------------------------
-
-export const ESCAPE_DOOR_COUNT = 5;
-export const ESCAPE_REACTIONS_PER_DOOR = 5;
-export const ESCAPE_CLUE_COST = 10;
-export const ESCAPE_XP_AWARD = 100;
-
-export type EscapeReaction = ReactionDTO & { mode: "build" | "name" };
-
-export type EscapeDoor = {
-  /** Chapter id (category order_index) this door represents. */
-  chapter: number;
-  name: string;
-  reactions: EscapeReaction[];
-};
+import {
+  ESCAPE_DOOR_COUNT,
+  ESCAPE_REACTIONS_PER_DOOR,
+  type EscapeReaction,
+  type EscapeDoor,
+} from "@/lib/escape-client";
+export {
+  ESCAPE_DOOR_COUNT,
+  ESCAPE_REACTIONS_PER_DOOR,
+  ESCAPE_CLUE_COST,
+  ESCAPE_XP_AWARD,
+  formatTime,
+  type EscapeReaction,
+  type EscapeDoor,
+} from "@/lib/escape-client";
 
 /**
  * Build the 5-door map for a class. Each door is a chapter (in order) with up to

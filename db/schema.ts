@@ -103,6 +103,7 @@ export const reactions = pgTable(
     hintWrongReactant: text("hint_wrong_reactant"),
     storyText: text("story_text"),
     whyText: text("why_text"),
+    realLifeUse: text("real_life_use"),
     isNameReaction: boolean("is_name_reaction").notNull().default(false),
     nameReactionLabel: text("name_reaction_label"),
     createdAt: timestamp("created_at", { withTimezone: true })

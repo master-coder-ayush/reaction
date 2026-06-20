@@ -7,6 +7,7 @@ import { BossTimer } from "@/components/BossTimer";
 import { BossResults } from "@/components/BossResults";
 import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
+import { maskEquation } from "@/lib/utils";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
 import { awardGuestXp } from "@/lib/guest";
@@ -220,7 +221,11 @@ export function BossSession({ chapter, questions, isGuest }: Props) {
               (isNameMode ? "text-lg font-semibold" : "text-base")
             }
           >
-            {question.equationText}
+            {maskEquation(
+              question.equationText,
+              options.find((o) => o.isCorrect)?.text ?? "",
+              questionType,
+            )}
           </p>
         )}
 

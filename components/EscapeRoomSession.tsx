@@ -8,6 +8,7 @@ import { EscapeRoomDoorMap } from "@/components/EscapeRoomDoorMap";
 import { Confetti } from "@/components/Confetti";
 import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
+import { maskEquation } from "@/lib/utils";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
 import { awardGuestXp } from "@/lib/guest";
@@ -283,7 +284,11 @@ export function EscapeRoomSession({ classLevel, doors, isGuest }: Props) {
               (isNameMode ? "text-lg font-semibold" : "text-base")
             }
           >
-            {reaction.equationText}
+            {maskEquation(
+              reaction.equationText,
+              options.find((o) => o.isCorrect)?.text ?? "",
+              type,
+            )}
           </p>
         )}
 

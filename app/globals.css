@@ -74,6 +74,9 @@
 
   /* Status helpers */
   --success: #00d25a;
+  --success-foreground: #ffffff;
+  --success-border: #009940;
+  --success-soft: #b3f5d4;
   --warning: #ffdc00;
   --warning-foreground: #000000;
   --warning-soft: #fff8b3;
@@ -129,6 +132,9 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-soft: var(--destructive-soft);
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-border: var(--success-border);
+  --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-warning-soft: var(--warning-soft);

@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Zap, Flag, Trophy } from "lucide-react";
+import { Zap, Flag, Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { TimerBar } from "@/components/TimerBar";
 import { Button } from "@/components/ui/button";
 import { fireLevelUp } from "@/components/LevelUpToast";
 import { fireBadgeEarned } from "@/lib/badge-client";
 import { awardGuestXp } from "@/lib/guest";
 import { reactionColorVar } from "@/lib/constants";
+import { maskEquation } from "@/lib/utils";
 import { XP_AWARDS } from "@/lib/xp";
 import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 
@@ -25,6 +26,14 @@ const MAX_QUESTIONS = 20;
 const TYPE_PRIORITY = ["name", "reagent", "product", "reactant"] as const;
 
 type Phase = "idle" | "countdown" | "running" | "done";
+
+type HistoryEntry = {
+  reaction: ReactionDTO;
+  qType: string;
+  correctText: string;
+  wasCorrect: boolean;
+  attempted: boolean;
+};
 
 function pickType(opts: ReactionOptionDTO[]): string {
   for (const t of TYPE_PRIORITY) if (opts.some((o) => o.optionType === t)) return t;
@@ -65,7 +74,8 @@ export function TimedSession({
   const [shuffledOptions, setShuffledOptions] = useState<Map<number, ReactionOptionDTO[]>>(new Map());
   const [pos, setPos] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [wrongId, setWrongId] = useState<number | null>(null);
+  const [pickedId, setPickedId] = useState<number | null>(null);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   // End-screen result.
   const [best, setBest] = useState<number | null>(initialBest);
@@ -92,7 +102,8 @@ export function TimedSession({
     setPos(0);
     setCorrectCount(0);
     setRemaining(DURATION);
-    setWrongId(null);
+    setPickedId(null);
+    setHistory([]);
     setAwardedXp(0);
     submittedRef.current = false;
     setCountdown(3);
@@ -163,11 +174,25 @@ export function TimedSession({
   );
 
   useEffect(() => {
-    // On run end, submit the score once (guards with submittedRef). The state
-    // updates happen async inside finalizeRun, not synchronously here.
+    if (phase !== "done") return;
+    // Record any questions that were reached but not yet answered (timer expired
+    // mid-question or MAX_QUESTIONS hit before the last answer was logged).
+    setHistory((h) => {
+      const answeredCount = h.length;
+      const extra: HistoryEntry[] = [];
+      for (let i = answeredCount; i < Math.min(order.length, MAX_QUESTIONS); i++) {
+        const idx = order[i];
+        const r = playable[idx];
+        if (!r) break;
+        const qt = pickType(r.options);
+        const correct = r.options.find((o) => o.optionType === qt && o.isCorrect);
+        extra.push({ reaction: r, qType: qt, correctText: correct?.text ?? "", wasCorrect: false, attempted: false });
+      }
+      return extra.length ? [...h, ...extra] : h;
+    });
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (phase === "done") void finalizeRun(correctCount);
-  }, [phase, correctCount, finalizeRun]);
+    void finalizeRun(correctCount);
+  }, [phase, correctCount, finalizeRun, order, playable]);
 
   // --- Idle / entry --------------------------------------------------------
   if (phase === "idle") {
@@ -224,34 +249,85 @@ export function TimedSession({
   if (phase === "done") {
     const isNewBest = best != null && correctCount >= best && correctCount > 0;
     return (
-      <div className="card-soft p-8 text-center">
-        <span className="icon-chip mx-auto bg-warn-soft text-warn-border" aria-hidden>
-          <Flag className="h-6 w-6" />
-        </span>
-        <h2 className="mt-3 text-xl font-extrabold tracking-tight">Time&apos;s up!</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          You answered{" "}
-          <span className="font-bold text-foreground">{correctCount}</span>{" "}
-          reaction{correctCount === 1 ? "" : "s"} correctly in 60 seconds!
-        </p>
-
-        <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-warn-soft px-4 py-1.5 text-sm font-bold text-warn-border">
-          <Zap className="h-4 w-4" aria-hidden /> +{awardedXp} XP
-        </p>
-
-        <p className="mt-4 text-sm font-semibold text-muted-foreground">
-          {isNewBest ? "New best!" : `Your best: ${best ?? correctCount}`}
-        </p>
-
-        {isGuest && (
-          <p className="mt-3 text-xs text-muted-foreground">
-            Sign up to save your score to the Speed leaderboard.
+      <div className="space-y-4">
+        <div className="card-soft p-6 text-center">
+          <span className="icon-chip mx-auto bg-warn-soft text-warn-border" aria-hidden>
+            <Flag className="h-6 w-6" />
+          </span>
+          <h2 className="mt-3 text-xl font-extrabold tracking-tight">Time&apos;s up!</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You answered{" "}
+            <span className="font-bold text-foreground">{correctCount}</span>{" "}
+            reaction{correctCount === 1 ? "" : "s"} correctly in 60 seconds!
           </p>
-        )}
 
-        <Button type="button" variant="warn" onClick={start} className="mt-6">
-          Play again
-        </Button>
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-warn-soft px-4 py-1.5 text-sm font-bold text-warn-border">
+            <Zap className="h-4 w-4" aria-hidden /> +{awardedXp} XP
+          </p>
+
+          <p className="mt-3 text-sm font-semibold text-muted-foreground">
+            {isNewBest ? "New best!" : `Your best: ${best ?? correctCount}`}
+          </p>
+
+          {isGuest && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Sign up to save your score to the Speed leaderboard.
+            </p>
+          )}
+
+          <Button type="button" variant="warn" onClick={start} className="mt-5">
+            Play again
+          </Button>
+        </div>
+
+        {history.length > 0 && (
+          <div className="card-soft p-5">
+            <h3 className="text-sm font-extrabold tracking-tight">Review</h3>
+            <div className="mt-3 space-y-3">
+              {history.map((entry, i) => {
+                const entryAccent = reactionColorVar(entry.reaction.reactionTypeColor);
+                return (
+                  <div
+                    key={i}
+                    className={
+                      "rounded-2xl border-2 p-3 " +
+                      (entry.wasCorrect
+                        ? "border-success-border bg-success-soft"
+                        : "border-destructive bg-destructive-soft")
+                    }
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold">
+                        {entry.wasCorrect
+                          ? <CheckCircle2 className="h-4 w-4 shrink-0 text-success-border" aria-hidden />
+                          : <XCircle className="h-4 w-4 shrink-0 text-destructive-border" aria-hidden />}
+                        <span className={entry.wasCorrect ? "text-success-border" : "text-destructive-border"}>
+                          {entry.wasCorrect ? "Correct" : entry.attempted ? "Wrong" : "Not reached"}
+                        </span>
+                      </div>
+                      <span
+                        className="rounded-full px-2 py-0.5 text-xs font-bold text-white"
+                        style={{ backgroundColor: entryAccent }}
+                      >
+                        {entry.reaction.reactionTypeName}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-sm font-bold">{entry.reaction.name}</p>
+                    {entry.reaction.equationText && (
+                      <p className="mt-1.5 rounded-lg bg-muted px-2.5 py-1.5 font-mono text-xs">
+                        {entry.reaction.equationText}
+                      </p>
+                    )}
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      {PROMPT[entry.qType] ?? "Answer"}:{" "}
+                      <span className="font-semibold text-foreground">{entry.correctText}</span>
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -266,19 +342,21 @@ export function TimedSession({
   const accent = reactionColorVar(reaction.reactionTypeColor);
 
   function handlePick(o: ReactionOptionDTO) {
-    if (o.isCorrect) {
+    if (pickedId != null) return; // already answered this question
+    setPickedId(o.id);
+    const correct = o.isCorrect;
+    const correctText = options.find((x) => x.isCorrect)?.text ?? "";
+    setHistory((h) => [...h, { reaction, qType, correctText, wasCorrect: correct, attempted: true }]);
+    if (correct) setCorrectCount((c) => c + 1);
+    window.setTimeout(() => {
+      setPickedId(null);
       const nextPos = pos + 1;
-      setCorrectCount((c) => c + 1);
-      setWrongId(null);
       if (nextPos >= order.length || nextPos >= MAX_QUESTIONS) {
         setPhase("done");
       } else {
         setPos(nextPos);
       }
-    } else {
-      setWrongId(o.id);
-      window.setTimeout(() => setWrongId((w) => (w === o.id ? null : w)), 350);
-    }
+    }, 1000);
   }
 
   return (
@@ -304,29 +382,38 @@ export function TimedSession({
         </p>
         {reaction.equationText && (
           <p className="mt-3 rounded-xl border border-border bg-muted px-3 py-2 text-center font-mono text-sm font-semibold">
-            {reaction.equationText}
+            {maskEquation(
+              reaction.equationText,
+              options.find((o) => o.isCorrect)?.text ?? "",
+              qType,
+            )}
           </p>
         )}
 
         <p className="mt-4 text-sm font-bold">{PROMPT[qType] ?? "Choose"}</p>
         <div className="mt-3 grid gap-2.5">
-          {options.map((o) => (
-            <motion.button
-              key={o.id}
-              type="button"
-              onClick={() => handlePick(o)}
-              animate={wrongId === o.id ? { x: [0, -8, 8, -6, 6, 0] } : { x: 0 }}
-              transition={{ duration: 0.35 }}
-              className={
-                "flex h-12 items-center rounded-2xl border-2 px-4 text-left text-sm font-semibold transition-all " +
-                (wrongId === o.id
-                  ? "border-destructive bg-destructive-soft text-destructive-border"
-                  : "border-border bg-card hover:-translate-y-px hover:border-warn hover:bg-warn-soft/40")
-              }
-            >
-              {o.text}
-            </motion.button>
-          ))}
+          {options.map((o) => {
+            const isPicked = pickedId === o.id;
+            const isLocked = pickedId != null;
+            let cls = "flex h-12 items-center rounded-2xl border-2 px-4 text-left text-sm font-semibold transition-all ";
+            if (isPicked && o.isCorrect) cls += "border-success-border bg-success-soft text-success-border";
+            else if (isPicked && !o.isCorrect) cls += "border-destructive bg-destructive-soft text-destructive-border";
+            else if (isLocked && o.isCorrect) cls += "border-success-border bg-success-soft text-success-border";
+            else if (isLocked) cls += "border-border bg-card opacity-40";
+            else cls += "border-border bg-card hover:-translate-y-px hover:border-warn hover:bg-warn-soft/40";
+            return (
+              <motion.button
+                key={o.id}
+                type="button"
+                onClick={() => handlePick(o)}
+                animate={isPicked && !o.isCorrect ? { x: [0, -8, 8, -6, 6, 0] } : { x: 0 }}
+                transition={{ duration: 0.35 }}
+                className={cls}
+              >
+                {o.text}
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </div>

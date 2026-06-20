@@ -9,6 +9,7 @@ import { XPAnimation } from "@/components/XPAnimation";
 import { ReferenceDrawer } from "@/components/ReferenceDrawer";
 import { Button } from "@/components/ui/button";
 import { reactionColorVar } from "@/lib/constants";
+import { maskEquation } from "@/lib/utils";
 import type { ReactionDTO, ReactionOptionDTO } from "@/app/api/reactions/route";
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
@@ -172,7 +173,13 @@ export function QuestionCard({
             (isNameMode ? "text-lg font-semibold" : "text-base")
           }
         >
-          {reaction.equationText}
+          {submitted
+            ? reaction.equationText
+            : maskEquation(
+                reaction.equationText,
+                options.find((o) => o.isCorrect)?.text ?? "",
+                questionType,
+              )}
         </p>
       )}
 

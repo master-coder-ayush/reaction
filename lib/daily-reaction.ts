@@ -19,7 +19,7 @@ export type ResolvedReaction = {
   questionText: string;
   equationText: string | null;
   difficulty: number;
-  classLevel: number;
+  classLevel: string;
   reactionTypeName: string;
   reactionTypeColor: string | null;
 };

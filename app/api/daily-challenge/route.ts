@@ -3,38 +3,17 @@ import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import {
-  dailyChallenges,
-  reactions,
-  reactionTypes,
-  userProgress,
-  userStats,
-} from "@/db/schema";
+import { userProgress, userStats } from "@/db/schema";
 import { applyXp, xpForDifficulty } from "@/lib/xp";
 import { todayString, checkAndUpdateStreak } from "@/lib/streak";
+import { resolveDailyReaction } from "@/lib/daily-reaction";
 
 // GET  /api/daily-challenge   → today's Reaction of the Day (by challenge_date).
 // POST /api/daily-challenge   → record a correct first attempt: double XP + streak.
 
 async function loadTodaysChallenge() {
   const today = todayString();
-  const [row] = await db
-    .select({
-      reactionId: reactions.id,
-      name: reactions.name,
-      questionText: reactions.questionText,
-      equationText: reactions.equationText,
-      difficulty: reactions.difficulty,
-      classLevel: reactions.classLevel,
-      reactionTypeName: reactionTypes.name,
-      reactionTypeColor: reactionTypes.color,
-      challengeDate: dailyChallenges.challengeDate,
-    })
-    .from(dailyChallenges)
-    .innerJoin(reactions, eq(dailyChallenges.reactionId, reactions.id))
-    .innerJoin(reactionTypes, eq(reactions.reactionTypeId, reactionTypes.id))
-    .where(eq(dailyChallenges.challengeDate, today))
-    .limit(1);
+  const row = await resolveDailyReaction(today);
   return { today, row };
 }
 

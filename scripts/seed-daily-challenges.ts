@@ -5,6 +5,14 @@ loadEnvLocal();
 // Sprint 8 §8.6 — pre-populate the Reaction of the Day for 30 days from "today"
 // (the server's local date). Cycles through available reactions, varying the
 // pick per day. Idempotent: one row per date (unique index), skipped if present.
+//
+// NOTE: This script is now REDUNDANT for keeping the feature working.
+// `resolveDailyReaction` (lib/daily-reaction.ts) deterministically derives a
+// Reaction of the Day for *any* date when no curated `dailyChallenges` row
+// exists, so every day always has a reaction without pre-seeding — and there's
+// no 30-day window to run out of (which is what caused the "No reaction is set
+// for today" gap). Kept only as an optional tool for hand-curating specific
+// days (a curated row still takes precedence over the deterministic fallback).
 
 function dateString(d: Date): string {
   const y = d.getFullYear();

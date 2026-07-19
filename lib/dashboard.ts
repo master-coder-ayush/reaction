@@ -2,15 +2,14 @@ import { and, asc, count, eq, gt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   categories,
-  dailyChallenges,
   reactions,
-  reactionTypes,
   userProgress,
   userStats,
 } from "@/db/schema";
 import { CHAPTERS } from "@/lib/constants";
 import { unlockedChapters } from "@/lib/chapters";
 import { projectBrokenStreak, todayString } from "@/lib/streak";
+import { resolveDailyReaction } from "@/lib/daily-reaction";
 import type { DailyChallenge } from "@/components/ReactionOfTheDay";
 import type { ChapterProgress } from "@/components/ChapterMap";
 
@@ -54,22 +53,7 @@ export async function loadDailyChallenge(
   userId: number | null
 ): Promise<DailyChallengeData> {
   return safe(async () => {
-    const today = todayString();
-    const [row] = await db
-      .select({
-        reactionId: reactions.id,
-        name: reactions.name,
-        questionText: reactions.questionText,
-        equationText: reactions.equationText,
-        difficulty: reactions.difficulty,
-        reactionTypeName: reactionTypes.name,
-        reactionTypeColor: reactionTypes.color,
-      })
-      .from(dailyChallenges)
-      .innerJoin(reactions, eq(dailyChallenges.reactionId, reactions.id))
-      .innerJoin(reactionTypes, eq(reactions.reactionTypeId, reactionTypes.id))
-      .where(eq(dailyChallenges.challengeDate, today))
-      .limit(1);
+    const row = await resolveDailyReaction();
 
     if (!row) return { challenge: null, bonusXp: 0, completed: false };
 
